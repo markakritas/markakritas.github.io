@@ -1,0 +1,125 @@
+/* Add a background color to page body */
+body {
+	background-color: rgb(255, 102, 0);
+}
+
+/* Add a black background color to the menu bar */
+.bar {
+    background-color: rgb(51, 51, 51);
+    overflow: hidden;
+}
+
+/* Style the links inside the bar */
+.bar a {
+    float: left;
+    color: white;
+    text-align: center;
+    padding: 14px 15px;
+    text-decoration: none;
+    font-size: 15px;
+    font-family: "Cinzel";
+}
+
+/* Change the color of links on hover */
+.bar a:hover {
+    background-color: rgb(221, 221, 221);
+    color: black;
+}
+
+/* Add a color to the focused link */
+.bar a:focus {
+    color: white;
+}
+
+/* Change color when header hovered */
+.header:hover {
+	color: white;
+}
+
+#footer {
+	color: white;
+}
+
+#footer:hover {
+	color: black;
+}
+
+.header {
+	font-family: "Cinzel";
+}
+
+.slogan {
+	text-align: right;
+	font-family: "Cinzel";
+}
+
+#author {
+    margin-left: 12em;
+}
+
+#img {
+	float: left;
+}
+
+#slogan {
+	margin-left: 12em;
+	float: left;
+}
+
+/* Separates paragraphs from picture and slogan */
+#about {
+	margin-top: 18em;
+}
+
+.paragraph, .table {
+	font-family: "Proza Libre";
+}
+
+/* Removes the line under link */
+#link {
+	text-decoration: none;
+}
+
+h3 {
+	margin-left: 2em;
+}
+
+.table, #row, #th, #tdata, #tdatay {
+	border: .5px solid rgb(51, 51, 51);
+}
+
+#th, #tdata, #tdatay {
+	padding: 15px;
+	width: 200px;
+}
+
+#tdatay {
+	text-align: center;
+}
+
+#lang {
+	text-align: right;
+}
+
+#row:hover {
+	background-color: grey;
+	color: white;
+}
+
+#unordered {
+	border-color: rgb(255, 102, 0);
+}
+
+footer {
+	background-color: rgb(51, 51, 51);
+	width: 100%;
+	height: 320px
+}
+
+#contact_table {
+	float: left;
+}
+
+#form {
+	float: left;
+}
