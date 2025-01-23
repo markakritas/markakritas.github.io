@@ -1,2 +1,2 @@
-# MarkAkritov.github.io
-Mark Akritov CV
+# markakritas.github.io
+Mark Akritas CV
