@@ -1,147 +1,347 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mark Akritas — data scientist · ml &amp; ai engineer</title>
+<meta name="description" content="Mark Akritas: data scientist and ML/AI engineer in Yerevan, Armenia. LLMs, RAG, agents and voice AI; before that experiment design, mixed-effects models, ML pipelines and signal processing.">
+<meta name="author" content="Mark Akritas">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbf1c7">
+<link rel="canonical" href="https://markakritas.github.io/">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="Mark Akritas — data scientist · ml & ai engineer">
+<meta property="og:description" content="An interactive resume, typeset like a preprint: a Lorenz attractor, a career scored as a piano roll, and a star atlas of the stack.">
+<meta property="og:url" content="https://markakritas.github.io/">
+<meta property="og:image" content="https://markakritas.github.io/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Mark Akritas, data scientist and ML & AI engineer, beside an interactive Lorenz attractor on graph paper">
+<meta name="twitter:image" content="https://markakritas.github.io/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="maple-mono-regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="maple-mono-bold.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+  // theme + accent before first paint; light unless the visitor chose dark
+  try {
+    var t = localStorage.getItem("theme"), a = localStorage.getItem("accent");
+    if (t === "dark") document.documentElement.dataset.theme = "dark";
+    if (a) document.documentElement.dataset.accent = a;
+  } catch (e) {}
+</script>
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Mark Akritas","jobTitle":"Data Scientist, AI/ML Engineer",
+ "email":"mailto:markakrita@gmail.com","url":"https://markakritas.github.io/","sameAs":["https://github.com/markakritas"],
+ "address":{"@type":"PostalAddress","addressLocality":"Yerevan","addressCountry":"AM"},
+ "alumniOf":[{"@type":"CollegeOrUniversity","name":"American University of Armenia"},{"@type":"CollegeOrUniversity","name":"Armenian State University of Economics"}],
+ "knowsLanguage":["hy","ru","en","el"]}
+</script>
+</head>
+<body>
+<div class="paper" aria-hidden="true"></div>
 
-	<head> 
-		<link href='https://fonts.googleapis.com/css?family=Cinzel' rel='stylesheet'>
-		<link href='https://fonts.googleapis.com/css?family=Proza Libre' rel='stylesheet'>
-		<link rel="stylesheet" type="text/css" href="style.css">
-		<title>Mark Akritov CV</title>
-	</head>
+<header class="bar" id="bar">
+  <a class="mono-mark" href="#top" aria-label="back to top">M<span>·</span>A</a>
+  <nav class="toc" aria-label="sections">
+    <a href="#abstract"><b>§0</b> abstract</a>
+    <a href="#trajectory"><b>§1</b> trajectory</a>
+    <a href="#methods"><b>§2</b> methods</a>
+    <a href="#projects"><b>§3</b> projects</a>
+    <a href="#education"><b>§4</b> education</a>
+    <a href="#languages"><b>§5</b> languages</a>
+    <a href="#marginalia"><b>§6</b> marginalia</a>
+  </nav>
+  <div class="bar-tools">
+    <div class="dl" id="dl">
+      <button class="pill" id="dl-btn" aria-expanded="false" aria-controls="dl-menu">pdf <span aria-hidden="true">↓</span></button>
+      <div class="dl-menu" id="dl-menu" hidden>
+        <a href="mark-akritas-resume.pdf" download="Mark Akritas — Resume.pdf"><b>classic</b><span>the professional one · 1 page</span></a>
+        <a href="mark-akritas-resume-preprint.pdf" download="Mark Akritas — Resume (preprint).pdf"><b>preprint</b><span>this page, on paper · 2 pages</span></a>
+      </div>
+    </div>
+    <button class="theme" id="theme" type="button" aria-pressed="false" title="toggle theme (t)">
+      <span class="cmd">:set bg=<b id="theme-name">light</b></span>
+      <span class="knob" aria-hidden="true"></span>
+    </button>
+  </div>
+</header>
 
-	<body>
-		<div class="bar">
-			<table>
-				<tr><a href="#about">About</a></tr>
-		  		<tr><a href="#studies">Studies</a></tr>
-		  		<tr><a href="#works">Works</a></tr>
-		  		<tr><a href="#skills">Skills</a></tr>
-		  		<tr><a href="#contacts">Contacts</a></tr>
-			</table>
-		</div>
-		<div>
-			<h1 class="header">Mark Akritov</h1>
-			<span id="img">
-				<img src="hot-orange-flower-skull.png" height="auto" width="auto" alt="my X-ray photo">
-			</span>	
-			<span id="slogan">
-				<small><p class="slogan"><i>"Always pass on what you have learned.<br>Do, or do not. There is no try..."</i></p>
-				<p class="slogan" id="author"><b><i>Master Yoda</i></b></p></small><br>
-			</span>
-		</div>
-		<div class="paragraph" id="about">
-			<h3 class="header">About</h2>
-			<p>Hello my friend. I'm Mark Akritov, I was born in Yerevan, Armenia in 01/11/1993.<br>This page is about my experience. For more, visit my <a id="link" href="linkedin.html" target="_blank">LinkedIn</a> page..</p>
-			<p>Below you will find were I studied, my work background and skills gained till now.</p>
-			<p>I will also place my contacts at the end in case if you want to contact me.<br>Thank you!</p><br>
-		</div>
-		<div id="studies">
-			<h3 class="header">Studies</h3>
-			<table class="table">
-				<tr id="row">
-					<th id="th">University</th>
-					<th id="th">Year</th>
-					<th id="th">Degree</th>
-				</tr>
-				<tr id="row">
-					<td id="tdata">Armenian State University of Economics</td>
-					<td id="tdatay">2010 - 2016</td>
-					<td id="tdata">Bachelor in Management</td>
-				</tr>
-				<tr id="row">
-					<td id="tdata">American University of Armenia</td>
-					<td id="tdatay">2017 - </td>
-					<td id="tdata">Master in Industrial Engineering</td>
-				</tr>
-			</table>
-		</div>
-		<div id="works">
-			<h3 class="header">Works</h3>
-			<table class="table">
-				<tr id="row">
-					<th id="th">Company</th>
-					<th id="th">Year</th>
-					<th id="th">Duties</th>
-				</tr>
-				<tr id="row">
-					<td id="tdata"></td>
-					<td id="tdatay">2014 - 2015</td>
-					<td id="tdata">Archivation, Documentation</td>
-				</tr>
-				<tr id="row">
-					<td id="tdata"></td>
-					<td id="tdatay">2015 - 2017</td>
-					<td id="tdata">Accountance, Financial analysis</td>
-				</tr>
-			</table>
-		</div>
-		<div class="my_list" id="skills">
-			<h3 class="header">Skills</h3>
-			<table class="table" id="unordered">
-				<tr>
-					<th id="lang">Languages</th>
-					<th>Software</th>
-				</tr>
-				<tr>
-					<td>
-						<ul>
-							<li>Armenian</li>
-							<li>Russian</li>
-							<li>English</li>
-							<li>Greek</li>
-						</ul>
-					</td>
-					<td>
-						<ul>
-							<li>AS Accountant</li>
-							<li>MS Office</li>
-							<li>R-Studio</li>
-							<li>PyCharm</li>
-						</ul>
-					</td>
-				</tr>
-			</table>
-		</div>
-		<div id="contacts">
-			<footer>
-				<h3 class="header" id="footer">Contacts</h3>
-				<div class="table">
-					<span id="conta_table">
-						<table class="table">
-							<tr>
-								<td>Phone</td>
-								<td>(+374)91 104455</td>
-							</tr>
-							<tr>
-								<td>Email</td>
-								<td>markakrita@gmail.com</td>
-							</tr>
-							<tr>
-								<td>Postal code</td>
-								<td>Yerevan, 0028</td>
-							</tr>
-							<tr>
-								<td>Address</td>
-								<td>Kievyan 3-7</td>
-							</tr>
-						</table>
-					</span>				
-				 	<span id="form">
-				 		<p class="paragraph">Leave me a contact</p>
-						<form action="leave_contact.html" target="_blank">
-						<label>Name Surname:</label>
-						<br>
-						<input type="text" name="">
-						<br>
-						<label>E-mail:</label>
-						<br>
-						<input type="email" name="" required="">
-						<br>
-						<input type="submit" name="">
-						</form>
-					</span>
-				</div>
-			</footer>
-		</div>
-	</body>
+<main class="page">
 
+<!-- ── title page ─────────────────────────────────────────────────────── -->
+<section class="title-block" id="top">
+  <div class="runhead"><span>preprint · markakritas.github.io</span><span class="rev">rev. 2026.11.03</span></div>
+  <svg class="sketch golden" id="golden" aria-hidden="true"></svg>
+
+  <div class="title-text">
+    <p class="kicker">curriculum vitae <span class="faint">· vol. 2</span></p>
+    <h1><span class="nm">Mark Akritas</span><span class="cursor" aria-hidden="true"></span></h1>
+    <p class="role">data scientist · ml &amp; ai engineer</p>
+    <p class="tagline">fitting models to a noisy universe.</p>
+    <dl class="facts">
+      <div><dt>now</dt><dd>ai/ml engineer @ advance2000</dd></div>
+      <div><dt>focus</dt><dd>llms · rag · agents · voice ai</dd></div>
+      <div><dt>codes</dt><dd>python · r · sql · js</dd></div>
+      <div><dt>speaks</dt><dd>hy · en · ru · el</dd></div>
+      <div><dt>base</dt><dd>yerevan, armenia</dd></div>
+    </dl>
+    <p class="chips">
+      <a class="chip" href="mailto:markakrita@gmail.com"><span>mail</span>markakrita@gmail.com</a>
+      <a class="chip" href="https://github.com/markakritas"><span>github</span>markakritas</a>
+      <a class="chip dl-chip" href="mark-akritas-resume.pdf" download="Mark Akritas — Resume.pdf"><span>pdf</span>classic ↓</a>
+      <a class="chip dl-chip" href="mark-akritas-resume-preprint.pdf" download="Mark Akritas — Resume (preprint).pdf"><span>pdf</span>preprint ↓</a>
+    </p>
+  </div>
+
+  <figure class="plate hero-fig" id="fig1">
+    <div class="stage graph-paper" id="lorenz-stage">
+      <canvas id="lorenz" aria-label="Interactive Lorenz attractor. Drag to rotate; click the curve to release two particles."></canvas>
+      <div class="inset" aria-hidden="true">
+        <canvas id="lyap"></canvas>
+        <span class="inset-label">log₁₀ |a − b|</span>
+      </div>
+      <p class="readout" id="readout" aria-live="off"></p>
+      <p class="hint" aria-hidden="true"><span>drag to rotate</span><svg viewBox="0 0 60 30"><path d="M2 24 C 18 28, 40 22, 54 6 M46 6 L55 5 L54 14"/></svg></p>
+    </div>
+    <div class="controls" id="lorenz-controls">
+      <label>σ <input type="range" id="p-sigma" min="1" max="30" step="0.1" value="10"><output for="p-sigma">10.0</output></label>
+      <label>ρ <input type="range" id="p-rho" min="0.5" max="60" step="0.1" value="28"><output for="p-rho">28.0</output></label>
+      <label>β <input type="range" id="p-beta" min="0.3" max="6" step="0.01" value="2.667"><output for="p-beta">2.67</output></label>
+      <span class="seg" role="group" aria-label="initial separation ε">
+        <span class="seg-l">ε</span>
+        <button data-eps="1e-3">10⁻³</button><button data-eps="1e-6" aria-pressed="true">10⁻⁶</button><button data-eps="1e-9">10⁻⁹</button><button data-eps="1e-12">10⁻¹²</button>
+      </span>
+      <button class="ghost" id="p-reset" title="σ=10 ρ=28 β=8/3">reset</button>
+    </div>
+    <figcaption><b>fig. 1</b> — the lorenz attractor. two particles, <i class="ink-a">a</i> and <i class="ink-b">b</i>, start ε apart; the inset plots how fast they part, and the dashed slope is the largest lyapunov exponent, λ₁ ≈ 0.906. shrink ε a thousandfold and you buy only a few more turns of the butterfly. drag to rotate · click the curve to drop a new pair.</figcaption>
+  </figure>
+</section>
+
+<!-- ── §0 abstract ────────────────────────────────────────────────────── -->
+<section class="sec" id="abstract">
+  <div class="sec-head"><span class="num">§0</span><h2>abstract</h2><span class="rule"></span><span class="ref">p. 1</span></div>
+  <div class="main prose">
+    <p class="lede">Data scientist and ML/AI engineer. Working with data since 2019<sup class="sn">1</sup>: experiment design and mixed-effects models, ML pipelines and signal processing, now LLMs: fine-tuning, RAG, agents and voice AI. Master's in industrial engineering; before that, crisis management and accounting<sup class="sn">2</sup>. Interests: music, history, science &amp; philosophy.</p>
+    <p>These days, at Advance2000: LoRA fine-tuning, a private ChatGPT-like assistant with web search, RAG and agents, and voice agents for call centers. Off hours: <a href="https://newspepper.dev">NewsPEPper</a>, a weekly Python newsletter, and a map of philosophy, still in development.</p>
+    <p class="keywords"><span>keywords</span> llms · rag · agents · voice ai · lora · mixed-effects models · design of experiments · signal processing · python · r</p>
+  </div>
+  <aside class="margin">
+    <p class="note"><sup>1</sup> the pooled estimate: 2019.06 → now, the ◆ at the foot of fig. 2.</p>
+    <p class="note"><sup>2</sup> the before-data years (service, judicial acts, ledgers) sit on the grey staff of fig. 2.</p>
+    <figure class="sketch-fig">
+      <svg class="sketch" id="bell" viewBox="0 0 300 170" role="img" aria-label="a hand-drawn normal distribution"></svg>
+      <figcaption><b>fig. a</b> — the bell curve, drawn by hand: ±1σ holds 68.3%.</figcaption>
+    </figure>
+  </aside>
+</section>
+
+<!-- ── §1 trajectory ──────────────────────────────────────────────────── -->
+<section class="sec" id="trajectory">
+  <div class="sec-head"><span class="num">§1</span><h2>trajectory</h2><span class="rule"></span><span class="ref">fig. 2</span></div>
+  <div class="main prose">
+    <p>Sixteen years, fifteen parts. The score opens with service, law and ledgers; data enters in 2019 and plays on every bar after. Read it like a piano roll: each row is a role, each note is how long I held it, and the chord to the right shows which instruments of the stack that role played.</p>
+  </div>
+  <aside class="margin">
+    <figure class="sketch-fig">
+      <canvas id="bifurcation" aria-label="Logistic map bifurcation diagram; hover to probe a value of r"></canvas>
+      <figcaption><b>fig. b</b> — the logistic map, xₙ₊₁ = r·xₙ(1−xₙ). one path, then two, then four, then all of them. hover to probe r: <span id="bif-read" class="mono-read">r = 3.20 · period 2</span></figcaption>
+    </figure>
+  </aside>
+
+  <figure class="wide plate fig-score" id="fig2">
+    <div class="scroll-x"><svg id="score" role="img" aria-label="Career drawn as a piano roll: fifteen roles from 2010 to now, grouped into industry, research and teaching, education, and before data."></svg></div>
+    <div class="howto" id="score-key"></div>
+    <figcaption><b>fig. 2</b> — career as a piano roll. rows are roles, notes span tenure, the chord counts the skill families each role used, and the dynamics strip underneath counts roles held at once. hover a row for its notes.</figcaption>
+  </figure>
+
+  <div class="wide jobs">
+    <h3 class="sub">work experience</h3>
+    <div id="jobs-main"></div>
+    <h3 class="sub">other experience</h3>
+    <ol class="other" id="jobs-other"></ol>
+  </div>
+</section>
+
+<!-- ── §2 methods ─────────────────────────────────────────────────────── -->
+<section class="sec" id="methods">
+  <div class="sec-head"><span class="num">§2</span><h2>methods</h2><span class="rule"></span><span class="ref">fig. 3</span></div>
+  <div class="main prose">
+    <p>The stack, charted as a sky. Each family of tools is a constellation and each ring is a year. A star rises the first year a role of mine used it and burns brighter the more roles used it, and the lines join each constellation in the order its stars appeared. Press play to watch the sky fill in.</p>
+  </div>
+  <aside class="margin">
+    <div class="proficiency">
+      <h3 class="sub">programming</h3>
+      <ul id="prof"></ul>
+    </div>
+  </aside>
+
+  <figure class="wide plate fig-atlas" id="fig3">
+    <div class="atlas-wrap">
+      <div class="atlas-stage" id="atlas-stage">
+        <canvas id="atlas-sky" aria-hidden="true"></canvas>
+        <svg id="atlas" role="img" aria-label="Star atlas of the stack: thirty-four tools arranged as seven constellations."></svg>
+      </div>
+      <div class="atlas-side">
+        <div class="howto" id="atlas-key"></div>
+        <div class="scrub">
+          <button class="pill play" id="atlas-play" aria-label="play the sky from 2017 to now">▶</button>
+          <input type="range" id="atlas-year" min="2017" max="2026.9" step="0.01" value="2026.9" aria-label="year">
+          <output id="atlas-year-out">now</output>
+        </div>
+      </div>
+    </div>
+    <figcaption><b>fig. 3</b> — atlas coelestis of the stack. angle = family, radius = first year in use (as of the earliest role that used it), size = how many roles used it. drag to turn the sky; hover a star.</figcaption>
+  </figure>
+  <details class="wide plain">
+    <summary>plain-text version</summary>
+    <div id="skills-plain"></div>
+  </details>
+</section>
+
+<!-- ── §3 projects ────────────────────────────────────────────────────── -->
+<section class="sec" id="projects">
+  <div class="sec-head"><span class="num">§3</span><h2>projects</h2><span class="rule"></span><span class="ref">fig. 4</span></div>
+  <div class="wide cards">
+    <a class="card plate np" href="https://newspepper.dev/#subscribe-email">
+      <div class="card-top">
+        <svg class="np-logo" id="np-logo" viewBox="0 0 128 128" aria-hidden="true"></svg>
+        <div><h3>NewsPEPper</h3><p class="muted">weekly python newsletter</p></div>
+      </div>
+      <p>PEPs and Python releases, summarized every saturday and delivered to your inbox.</p>
+      <div class="np-cal" id="np-cal" aria-hidden="true"></div>
+      <div class="np-form" aria-hidden="true"><span class="field">you@example.com</span><span class="btn">subscribe ↗</span></div>
+    </a>
+
+    <div class="card plate ph" id="philosophy-card">
+      <div class="card-top">
+        <div><h3>map of philosophy</h3><p class="muted">a tool for philosophy enthusiasts</p></div>
+        <span class="status"><i></i>in development</span>
+      </div>
+      <svg id="philosophy" role="img" aria-label="Fourteen thinkers from Heraclitus to Wittgenstein and who read whom; hover a thinker."></svg>
+      <p class="ph-read" id="ph-read">hover a thinker to trace who they read, and who read them.</p>
+      <div class="progress" aria-hidden="true"><i></i></div>
+    </div>
+
+    <a class="card plate jw" href="https://marketplace.visualstudio.com/items?itemName=markakritas.jumpwise">
+      <div class="card-top">
+        <svg class="jw-logo" viewBox="0 0 128 128" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="7"><circle cx="32" cy="32" r="13"/><circle cx="32" cy="96" r="13"/><circle cx="96" cy="96" r="13"/><path d="M32 46V82M46 96H82"/></g><text x="74" y="44" font-size="34" font-weight="700" fill="currentColor">jw</text></svg>
+        <div><h3>jumpwise</h3><p class="muted">vs code extension</p></div>
+      </div>
+      <p>Keyboard navigation between the symbols of a file: next and previous function, class or method, and in and out of nested levels. ⌘⌥ + arrows.</p>
+      <pre class="jw-demo" id="jw-demo" aria-hidden="true"></pre>
+      <span class="link-line">marketplace ↗</span>
+    </a>
+  </div>
+  <p class="wide cap"><b>fig. 4</b> — three things built after hours. the network in the middle card is live: ideas travel along the edges, from heraclitus to wittgenstein.</p>
+</section>
+
+<!-- ── §4 education ───────────────────────────────────────────────────── -->
+<section class="sec" id="education">
+  <div class="sec-head"><span class="num">§4</span><h2>education</h2><span class="rule"></span><span class="ref">figs. c–d</span></div>
+  <div class="wide edu">
+    <article class="degree plate">
+      <div class="deg-text">
+        <p class="when">2017.09 — 2020.06</p>
+        <h3>Master in Industrial Engineering &amp; Systems Management</h3>
+        <p class="where">American University of Armenia</p>
+        <p><span class="lbl">concentration</span> data analytics</p>
+        <p><span class="lbl">capstone</span> temporal data-based anomaly localization in networks</p>
+      </div>
+      <figure class="deg-fig">
+        <svg id="anomaly" viewBox="0 0 320 200" role="img" aria-label="A network whose signals are monitored over time; one node is flagged as the anomaly."></svg>
+        <figcaption><b>fig. c</b> — the capstone in one picture: watch the signals, find the node that breaks rhythm.</figcaption>
+      </figure>
+    </article>
+    <article class="degree plate">
+      <div class="deg-text">
+        <p class="when">2010.09 — 2016.06</p>
+        <h3>Bachelor in Crisis Management</h3>
+        <p class="where">Armenian State University of Economics</p>
+        <p><span class="lbl">thesis</span> spatial development in the Republic of Armenia</p>
+      </div>
+      <figure class="deg-fig">
+        <svg id="topo" viewBox="0 0 320 200" role="img" aria-label="A hand-drawn contour map."></svg>
+        <figcaption><b>fig. d</b> — spatial development, as contour lines: the thesis was about where things grow, and why there.</figcaption>
+      </figure>
+    </article>
+  </div>
+</section>
+
+<!-- ── §5 languages ───────────────────────────────────────────────────── -->
+<section class="sec" id="languages">
+  <div class="sec-head"><span class="num">§5</span><h2>languages</h2><span class="rule"></span><span class="ref">fig. 5</span></div>
+  <div class="main prose">
+    <p>Four languages, recorded as signals. Amplitude is proficiency; the hiss is the effort it still takes. Hover a trace to hear it say hello.</p>
+  </div>
+  <figure class="wide plate fig-waves" id="fig5">
+    <div id="waves"></div>
+    <figcaption><b>fig. 5</b> — languages as oscilloscope traces · amplitude ∼ proficiency (0–5) · noise ∼ 5 − proficiency.</figcaption>
+  </figure>
+</section>
+
+<!-- ── §6 marginalia ──────────────────────────────────────────────────── -->
+<section class="sec" id="marginalia">
+  <div class="sec-head"><span class="num">§6</span><h2>marginalia</h2><span class="rule"></span><span class="ref">fig. e</span></div>
+  <div class="main prose">
+    <p>History, music, philosophy, science, and a long habit of ricing linux desktops. That habit is why this page wears gruvbox. Click a swatch in the terminal to re-ink it.</p>
+  </div>
+  <div class="wide margin-row">
+    <figure class="term plate" id="term">
+      <div class="term-bar"><i></i><i></i><i></i><span>mark@yerevan: ~</span></div>
+      <pre id="fetch" aria-label="interests, written as neofetch output"></pre>
+    </figure>
+    <figure class="sketch-fig pend plate">
+      <canvas id="pendulum" aria-label="A double pendulum; drag either bob to release it from a new position."></canvas>
+      <figcaption><b>fig. e</b> — a double pendulum: deterministic, unrepeatable. grab a bob and let go.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ── end matter ─────────────────────────────────────────────────────── -->
+<footer class="sec endmatter" id="end">
+  <div class="sec-head"><span class="num">∴</span><h2>end matter</h2><span class="rule"></span><span class="ref">fig. 6</span></div>
+  <div class="wide qotd">
+    <blockquote id="quote"><p></p><footer></footer></blockquote>
+    <p class="eq"><span class="lbl">eq. of the day</span><span class="formula" id="eq"></span><span class="eq-name" id="eq-name"></span></p>
+  </div>
+
+  <figure class="wide plate fig-ararat" id="fig6">
+    <canvas id="ararat" aria-label="Mount Ararat, Masis and Sis, traced by rotating circles of a discrete Fourier transform"></canvas>
+    <div class="controls">
+      <label>circles <input type="range" id="k-circles" min="1" max="160" step="1" value="40"><output for="k-circles">40</output></label>
+      <span class="annot" id="ararat-note">masis &amp; sis</span>
+    </div>
+    <figcaption><b>fig. 6</b> — ararat as seen from yerevan, masis on the right and sis on the left, redrawn by k rotating circles: the discrete fourier transform of one outline. drop to one circle and you get a circle; around forty, you get home.</figcaption>
+  </figure>
+
+  <div class="wide colophon">
+    <div>
+      <h3 class="sub">correspondence</h3>
+      <p><a href="mailto:markakrita@gmail.com">markakrita@gmail.com</a><br><a href="https://github.com/markakritas">github.com/markakritas</a><br>yerevan, armenia</p>
+    </div>
+    <div>
+      <h3 class="sub">downloads</h3>
+      <p><a href="mark-akritas-resume.pdf" download="Mark Akritas — Resume.pdf">resume · classic (pdf)</a><br><a href="mark-akritas-resume-preprint.pdf" download="Mark Akritas — Resume (preprint).pdf">resume · preprint (pdf)</a></p>
+    </div>
+    <div>
+      <h3 class="sub">revisions</h3>
+      <p>vol. 2 · 2026.11: this edition<br><a href="v1/">vol. 1 · 2018.06: the orange one</a></p>
+    </div>
+    <div>
+      <h3 class="sub">colophon</h3>
+      <p>set in maple mono · gruvbox on paper · drawn with canvas &amp; svg, no frameworks · <a href="https://github.com/markakritas/markakritas.github.io">source</a></p>
+    </div>
+  </div>
+</footer>
+</main>
+
+<div class="tip" id="tip" role="tooltip" hidden></div>
+<noscript><p class="noscript">The figures on this page are drawn with JavaScript. The full resume is in the <a href="mark-akritas-resume.pdf">classic PDF</a>.</p></noscript>
+
+<script src="data.js"></script>
+<script src="lib.js"></script>
+<script src="site.js"></script>
+</body>
 </html>

@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mark Akritas — Resume (preprint)</title>
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- The source of mark-akritas-resume-preprint.pdf: open in Chrome and print to PDF
+     (A4, margins none, background graphics on), or see README.md for the headless command. -->
+<style>
+@font-face { font-family: "Maple Mono"; src: url(maple-mono-regular.woff2) format("woff2"); font-weight: 400; font-style: normal; }
+@font-face { font-family: "Maple Mono"; src: url(maple-mono-italic.woff2) format("woff2"); font-weight: 400; font-style: italic; }
+@font-face { font-family: "Maple Mono"; src: url(maple-mono-bold.woff2) format("woff2"); font-weight: 700; font-style: normal; }
+@font-face { font-family: "JetBrains Mono"; src: url(jetbrains-mono-regular.woff2) format("woff2"); unicode-range: U+2190-21FF, U+2200-22FF, U+2300-23FF, U+25A0-25FF, U+27C0-27FF; }
+@page { size: A4; margin: 0; }
+:root {
+  --bg: #fbf1c7; --bg-soft: #f2e5bc; --line: #ebdbb2; --line2: #d5c4a1;
+  --fg: #3c3836; --fg2: #504945; --muted: #7c6f64; --faint: #a89984;
+  --red: #9d0006; --green: #79740e; --yellow: #b57614; --blue: #076678;
+  --purple: #8f3f71; --aqua: #427b58; --orange: #af3a03; --accent: var(--orange);
+  --ink-a: var(--orange); --ink-b: var(--blue);
+  --mono: "Maple Mono", "JetBrains Mono", ui-monospace, Menlo, monospace;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { background: #8a8170; font: 400 10.5px/1.55 var(--mono); color: var(--fg2); font-kerning: none; }
+h1, h2, h3, h4, p, ul, ol, dl, dd, figure { margin: 0; }
+a { color: inherit; text-decoration: none; }
+.page {
+  width: 210mm; height: 297mm; margin: 0 auto 24px; padding: 10.5mm 12mm 9mm; position: relative; overflow: hidden;
+  background-color: var(--bg); background-image: var(--grain, none); break-after: page;
+}
+.page:last-child { break-after: auto; }
+@media print { body { background: none; } .page { margin: 0; } }
+.page::after { /* crop marks */
+  content: ""; position: absolute; inset: 0; pointer-events: none; --m: #bdae93; --o: 5mm;
+  background:
+    linear-gradient(var(--m), var(--m)) var(--o) var(--o) / 9px .7px no-repeat, linear-gradient(var(--m), var(--m)) var(--o) var(--o) / .7px 9px no-repeat,
+    linear-gradient(var(--m), var(--m)) right var(--o) top var(--o) / 9px .7px no-repeat, linear-gradient(var(--m), var(--m)) right var(--o) top var(--o) / .7px 9px no-repeat,
+    linear-gradient(var(--m), var(--m)) left var(--o) bottom var(--o) / 9px .7px no-repeat, linear-gradient(var(--m), var(--m)) left var(--o) bottom var(--o) / .7px 9px no-repeat,
+    linear-gradient(var(--m), var(--m)) right var(--o) bottom var(--o) / 9px .7px no-repeat, linear-gradient(var(--m), var(--m)) right var(--o) bottom var(--o) / .7px 9px no-repeat;
+}
+.runhead { display: flex; justify-content: space-between; font-size: 8.5px; color: var(--faint); letter-spacing: .03em; padding-bottom: 4px; border-bottom: .7px solid var(--line2); }
+.folio { position: absolute; bottom: 7mm; left: 12mm; right: 12mm; display: flex; justify-content: space-between; font-size: 8px; color: var(--faint); }
+.folio i { color: var(--muted); }
+
+/* title */
+.title { display: grid; grid-template-columns: 1fr 280px; gap: 22px; align-items: center; margin-top: 10px; }
+.kicker { font-size: 8px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+h1 { font-size: 34px; line-height: 1; letter-spacing: -.03em; color: var(--fg); font-weight: 700; }
+.cursor { display: inline-block; width: 3px; height: 28px; margin-left: 5px; background: var(--accent); vertical-align: -2px; }
+.role { color: var(--accent); font-size: 13px; margin-top: 9px; }
+.tagline { font-style: italic; color: var(--muted); font-size: 11.5px; margin-top: 2px; }
+.facts { margin-top: 12px; display: grid; gap: 0; font-size: 10px; }
+.facts div { display: grid; grid-template-columns: 7ch 1fr; }
+.facts dt { color: var(--faint); } .facts dd { color: var(--fg2); }
+.contacts { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+.chip { display: inline-flex; align-items: center; height: 19px; border: .7px solid var(--line2); border-radius: 4px; font-size: 9.5px; overflow: hidden; padding-right: 7px; gap: 7px; background: rgba(242, 229, 188, .6); color: var(--fg); }
+.chip span { align-self: stretch; display: grid; place-items: center; padding: 0 6px; color: var(--accent); background: rgba(175, 58, 3, .11); border-right: .7px solid var(--line2); }
+.plate { position: relative; border: .7px solid var(--line2); border-radius: 7px; background: rgba(242, 229, 188, .45); }
+.plate::after { content: ""; position: absolute; inset: 0; pointer-events: none; --m: rgba(168,153,132,.8);
+  background:
+    linear-gradient(var(--m), var(--m)) 7px 7px / 6px .7px no-repeat, linear-gradient(var(--m), var(--m)) 7px 7px / .7px 6px no-repeat,
+    linear-gradient(var(--m), var(--m)) right 7px top 7px / 6px .7px no-repeat, linear-gradient(var(--m), var(--m)) right 7px top 7px / .7px 6px no-repeat,
+    linear-gradient(var(--m), var(--m)) left 7px bottom 7px / 6px .7px no-repeat, linear-gradient(var(--m), var(--m)) left 7px bottom 7px / .7px 6px no-repeat,
+    linear-gradient(var(--m), var(--m)) right 7px bottom 7px / 6px .7px no-repeat, linear-gradient(var(--m), var(--m)) right 7px bottom 7px / .7px 6px no-repeat; }
+.cap { font-size: 8px; font-style: italic; color: var(--muted); line-height: 1.45; }
+.cap b { font-style: normal; font-weight: 400; color: var(--fg2); }
+.fig1 svg { display: block; width: 100%; height: auto; border-radius: 7px 7px 0 0; }
+.fig1 .cap { padding: 5px 10px 8px; border-top: .7px solid var(--line2); }
+
+/* sections */
+.sec { margin-top: 12px; }
+.sec-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px; }
+.sec-head .num { color: var(--accent); font-size: 10px; }
+.sec-head h2 { font-size: 13.5px; color: var(--fg); font-weight: 700; }
+.sec-head .rule { flex: 1; height: .7px; background: var(--line2); position: relative; top: -3px; }
+.sec-head .ref { font-size: 8px; font-style: italic; color: var(--faint); }
+.lede { color: var(--fg); font-size: 10.5px; }
+.kw { margin-top: 4px; font-size: 9px; color: var(--muted); }
+.kw span { color: var(--faint); letter-spacing: .12em; text-transform: uppercase; font-size: 7.5px; margin-right: 6px; }
+.job { display: grid; grid-template-columns: 66px 1fr 66px; gap: 0 12px; padding: 5px 0 6px; border-top: .7px solid var(--line2); }
+.job .when { font-size: 8.5px; color: var(--faint); line-height: 1.4; padding-top: 1px; }
+.job h4 { font-size: 11px; color: var(--fg); line-height: 1.35; }
+.job .org { font-size: 9px; color: var(--accent); line-height: 1.35; }
+.job .org span { color: var(--muted); }
+.job .txt { margin-top: 2px; font-size: 9.5px; line-height: 1.45; color: var(--fg2); }
+.tags { display: flex; flex-wrap: wrap; gap: 2px 3px; margin-top: 3px; padding: 0; list-style: none; }
+.tags li { font-size: 7.4px; line-height: 1.25; padding: 0 3.5px; border-radius: 3px; color: var(--fg2); border: .7px solid var(--c); background: color-mix(in srgb, var(--c) 10%, transparent); }
+.chord { align-self: center; }
+.other { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 18px; }
+.other li { padding: 4px 0 5px; border-top: .7px solid var(--line2); display: grid; line-height: 1.38; }
+.other .r { color: var(--fg); font-size: 9.5px; }
+.other .r span { color: var(--muted); font-size: 8.5px; }
+.other .w { color: var(--muted); font-size: 9px; }
+.other .d { color: var(--faint); font-size: 8.5px; }
+.other .x { color: var(--fg2); font-size: 8.5px; font-style: italic; }
+.cards { display: grid; grid-template-columns: repeat(3, 1fr) 1.15fr; gap: 8px; }
+.card.marg { padding: 4px 0 0 4px; }
+.card { padding: 8px 11px 9px; }
+.card h3 { font-size: 10.5px; color: var(--fg); display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+.card .dev { font-size: 8px; font-weight: 400; color: var(--yellow); border: .7px solid rgba(181,118,20,.5); border-radius: 8px; padding: 0 6px; white-space: nowrap; }
+.card .k { font-size: 8.5px; color: var(--muted); }
+.card p { font-size: 8.6px; line-height: 1.4; margin-top: 3px; }
+.card .u { font-size: 8.5px; color: var(--accent); margin-top: 4px; display: block; }
+
+/* page 2 */
+.score svg, .atlas svg { display: block; width: 100%; height: auto; }
+.score { padding: 6px 10px 6px; }
+.score .cap { padding: 2px 2px 0; }
+.methods { display: grid; grid-template-columns: 266px 1fr; gap: 16px; align-items: start; }
+.atlas { padding: 4px; }
+.atlas .cap { padding: 0 8px 7px; }
+.side { display: grid; gap: 9px; }
+.sub { font-size: 7.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--faint); margin-bottom: 3px; }
+.key { display: grid; gap: 2px; font-size: 9px; color: var(--muted); }
+.key .k { display: flex; align-items: center; gap: 6px; }
+.key i { font-style: italic; color: var(--fg2); }
+.prof { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 14px; }
+.prof li { display: grid; grid-template-columns: 1fr auto; gap: 1px 8px; font-size: 9.5px; color: var(--fg); }
+.prof .lv { font-size: 8.5px; font-style: italic; color: var(--muted); }
+.prof .bar { grid-column: 1 / -1; display: flex; gap: 2px; height: 3.5px; }
+.prof .bar i { flex: 1; border: .6px solid rgba(181,118,20,.6); border-radius: 1px; }
+.prof .bar i.f { background: rgba(181,118,20,.7); }
+.stack { display: grid; gap: 3px; font-size: 8.8px; line-height: 1.38; color: var(--fg2); }
+.stack i { color: var(--fg); }
+.stack .fam { color: var(--faint); font-size: 8px; }
+.stack b { font-weight: 400; color: var(--faint); font-size: 7.5px; letter-spacing: .12em; text-transform: uppercase; display: block; }
+.duo { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; }
+.degree { padding: 4px 0 5px; border-top: .7px solid var(--line2); line-height: 1.42; }
+.degree .when { font-size: 8.5px; color: var(--faint); }
+.degree h4 { font-size: 10.5px; color: var(--fg); }
+.degree .where { font-size: 9.5px; color: var(--accent); }
+.degree p { font-size: 9px; }
+.lbl { color: var(--faint); font-size: 7.5px; letter-spacing: .12em; text-transform: uppercase; margin-right: 5px; }
+.langs { display: grid; gap: 1px; }
+.lang { display: grid; grid-template-columns: 70px 1fr 104px; align-items: center; gap: 8px; padding: 2px 0; border-top: .7px dashed var(--line2); }
+.lang .nm { font-size: 11px; color: var(--fg); line-height: 1.15; }
+.lang .nm small { display: block; font-size: 7.5px; color: var(--faint); }
+.lang .lv { font-size: 8px; font-style: italic; color: var(--muted); text-align: right; line-height: 1.25; }
+.lang .lv b { display: block; font-style: normal; font-weight: 400; color: var(--fg2); }
+.end { display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: end; border-top: .7px solid var(--line2); padding-top: 8px; }
+.quote { font-style: italic; font-size: 11px; color: var(--fg); }
+.quote small { display: block; font-style: normal; font-size: 9px; color: var(--muted); margin-top: 2px; }
+.interests { font-size: 9.5px; }
+.sketch text { font-family: var(--mono); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ page 1 ═══════════════════════════════ -->
+<section class="page">
+  <div class="runhead"><span>preprint · markakritas.github.io</span><span id="rev"></span></div>
+
+  <div class="title">
+    <div>
+      <p class="kicker">curriculum vitae · vol. 2</p>
+      <h1>Mark Akritas<span class="cursor"></span></h1>
+      <p class="role">data scientist · ml &amp; ai engineer</p>
+      <p class="tagline">fitting models to a noisy universe.</p>
+      <dl class="facts">
+        <div><dt>now</dt><dd>ai/ml engineer @ advance2000</dd></div>
+        <div><dt>focus</dt><dd>llms · rag · agents · voice ai</dd></div>
+        <div><dt>codes</dt><dd>python · r · sql · js</dd></div>
+        <div><dt>speaks</dt><dd>hy · en · ru · el</dd></div>
+        <div><dt>base</dt><dd>yerevan, armenia</dd></div>
+      </dl>
+      <p class="contacts">
+        <a class="chip" href="mailto:markakrita@gmail.com"><span>mail</span>markakrita@gmail.com</a>
+        <a class="chip" href="tel:+37491104455"><span>tel</span>+374 91 10 44 55</a>
+        <a class="chip" href="https://github.com/markakritas"><span>github</span>markakritas</a>
+        <a class="chip" href="https://markakritas.github.io"><span>web</span>markakritas.github.io</a>
+      </p>
+    </div>
+    <figure class="plate fig1">
+      <svg id="lorenz" viewBox="0 0 300 182" role="img" aria-label="The Lorenz attractor"></svg>
+      <p class="cap"><b>fig. 1</b> — the lorenz attractor, σ=10 ρ=28 β=8/3. two particles started <span style="font-style:normal">10⁻⁶</span> apart part ways within twenty turns. in the interactive edition you can drag it.</p>
+    </figure>
+  </div>
+
+  <div class="sec">
+    <div class="sec-head"><span class="num">§0</span><h2>abstract</h2><span class="rule"></span></div>
+    <p class="lede">Data scientist and ML/AI engineer. Working with data since 2019: experiment design and mixed-effects models, ML pipelines and signal processing, now LLMs: fine-tuning, RAG, agents and voice AI. Master's in industrial engineering; before that, crisis management and accounting. Interests: music, history, science &amp; philosophy.</p>
+    <p class="kw"><span>keywords</span>llms · rag · agents · voice ai · lora · mixed-effects models · design of experiments · signal processing · python · r</p>
+  </div>
+
+  <div class="sec">
+    <div class="sec-head"><span class="num">§1</span><h2>work experience</h2><span class="rule"></span><span class="ref">chords: skill families in play</span></div>
+    <div id="jobs"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-head"><span class="num">§1′</span><h2>other experience</h2><span class="rule"></span></div>
+    <ol class="other" id="other"></ol>
+  </div>
+
+  <div class="folio"><span>Mark Akritas · resume</span><i>continued overleaf: the career as a score, and the stack as a sky →</i><span>1 / 2</span></div>
+</section>
+
+<!-- ═══════════════════════════════ page 2 ═══════════════════════════════ -->
+<section class="page">
+  <div class="runhead"><span>preprint · markakritas.github.io</span><span>Mark Akritas</span></div>
+
+  <div class="sec" style="margin-top:12px">
+    <div class="sec-head"><span class="num">§1</span><h2>trajectory</h2><span class="rule"></span><span class="ref">fig. 2</span></div>
+    <figure class="plate score">
+      <svg id="score" role="img" aria-label="Career as a piano roll"></svg>
+      <p class="cap"><b>fig. 2</b> — career as a piano roll: rows are roles, notes span tenure, chords count skill families; ◆ pools the data years.</p>
+    </figure>
+  </div>
+
+  <div class="sec">
+    <div class="sec-head"><span class="num">§2</span><h2>methods</h2><span class="rule"></span><span class="ref">fig. 3</span></div>
+    <div class="methods">
+      <figure class="plate atlas">
+        <svg id="atlas" viewBox="-200 -200 400 400" role="img" aria-label="Star atlas of the stack"></svg>
+        <p class="cap"><b>fig. 3</b> — the stack as a sky: angle = family, radius = first year in use, size = roles using it.</p>
+      </figure>
+      <div class="side">
+        <div><p class="sub">the stack, by constellation</p><div class="stack" id="stack"></div></div>
+        <div><p class="sub">programming · self-assessed</p><ul class="prof" id="prof"></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec duo">
+    <div>
+      <div class="sec-head"><span class="num">§4</span><h2>education</h2><span class="rule"></span></div>
+      <div class="degree"><p class="when">2017.09 — 2020.06</p><h4>Master in Industrial Engineering &amp; Systems Management</h4><p class="where">American University of Armenia</p><p><span class="lbl">concentration</span>data analytics</p><p><span class="lbl">capstone</span>temporal data-based anomaly localization in networks</p></div>
+      <div class="degree"><p class="when">2010.09 — 2016.06</p><h4>Bachelor in Crisis Management</h4><p class="where">Armenian State University of Economics</p><p><span class="lbl">thesis</span>spatial development in the Republic of Armenia</p></div>
+    </div>
+    <div>
+      <div class="sec-head"><span class="num">§5</span><h2>languages</h2><span class="rule"></span><span class="ref">fig. 5</span></div>
+      <div class="langs" id="langs"></div>
+      <p class="cap" style="margin-top:4px"><b>fig. 5</b> — amplitude ∼ proficiency (0–5), noise ∼ the effort it still takes.</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-head"><span class="num">§3</span><h2>projects</h2><span class="rule"></span><span class="num">§6</span><h2>marginalia</h2><span class="rule" style="flex:.25"></span></div>
+    <div class="cards">
+      <div class="card plate"><h3>NewsPEPper</h3><span class="k">weekly python newsletter</span><p>PEPs and Python releases, summarized every saturday.</p><a class="u" href="https://newspepper.dev">newspepper.dev ↗</a></div>
+      <div class="card plate"><h3>map of philosophy</h3><span class="k"><small class="dev">in development</small> for philosophy enthusiasts</span><p>Who read whom, from heraclitus to wittgenstein.</p></div>
+      <div class="card plate"><h3>jumpwise</h3><span class="k">vs code extension</span><p>Keyboard navigation between the symbols of a file.</p><a class="u" href="https://marketplace.visualstudio.com/items?itemName=markakritas.jumpwise">vs code marketplace ↗</a></div>
+      <div class="card marg"><p class="interests"><span class="lbl">interests</span><br>history · music · philosophy · science · linux ricing</p><p class="cap" style="margin-top:6px">set in maple mono · gruvbox on paper. every figure is live in the interactive edition: <b>markakritas.github.io</b></p></div>
+    </div>
+  </div>
+
+  <div class="folio"><span>Mark Akritas · resume</span><i>markakrita@gmail.com · github.com/markakritas</i><span>2 / 2</span></div>
+</section>
+
+<script src="data.js"></script>
+<script src="lib.js"></script>
+<script>
+(() => {
+  const { S, H, esc, rng, clamp, lorenz, simplify, ym, tenure, nowYears, noise1 } = L;
+  const C = window.CV, FAM = C.FAMILIES, KEYS = Object.keys(FAM), NOW = nowYears();
+  const famVar = (f) => `var(--${FAM[f].color})`;
+  const end = (r) => (r.end ? C.years(r.end) : NOW);
+  const label = (p, x, y, s, a = {}) => { const t = S("text", { x, y, ...a }, p); t.textContent = s; return t; };
+  const d = new Date();
+  document.getElementById("rev").textContent = `rev. ${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
+
+  // a smooth paper tooth, painted once on canvas and tiled (light in the pdf)
+  (() => {
+    const c = document.createElement("canvas"); c.width = c.height = 220;
+    const g = c.getContext("2d"), img = g.createImageData(220, 220), r = rng(7);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const v = r();
+      img.data[i] = 60; img.data[i + 1] = 56; img.data[i + 2] = 54; img.data[i + 3] = Math.round((v * v) * 16);
+    }
+    g.putImageData(img, 0, 0);
+    g.globalAlpha = 0.05; g.strokeStyle = "#6b5a3c"; g.lineWidth = 0.6;
+    for (let k = 0; k < 26; k++) { const x = r() * 220, y = r() * 220, l = 8 + r() * 26; g.beginPath(); g.moveTo(x, y); g.lineTo(x + l, y + (r() - 0.5) * 2); g.stroke(); }
+    document.documentElement.style.setProperty("--grain", `url(${c.toDataURL("image/png")})`);
+  })();
+
+  // fig. 1 — lorenz, static
+  (() => {
+    const svg = document.getElementById("lorenz"), W = 300, Hh = 182;
+    svg.innerHTML = `<defs><pattern id="g1" width="7" height="7" patternUnits="userSpaceOnUse"><path d="M7 0H0V7" fill="none" stroke="#d5c4a1" stroke-width=".35"/></pattern>
+      <pattern id="g5" width="35" height="35" patternUnits="userSpaceOnUse"><path d="M35 0H0V35" fill="none" stroke="#bdae93" stroke-width=".5"/></pattern>
+      <linearGradient id="flow" x1="0" x2="1"><stop offset="0" stop-color="#076678"/><stop offset=".5" stop-color="#427b58"/><stop offset="1" stop-color="#b57614"/></linearGradient></defs>
+      <rect width="${W}" height="${Hh}" fill="url(#g1)" opacity=".7"/><rect width="${W}" height="${Hh}" fill="url(#g5)" opacity=".7"/>`;
+    const tr = lorenz({ n: 11000, dt: 0.006, skip: 1200 }), n = tr.length / 3;
+    const yaw = -0.52, pitch = 0.12, cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    let cx0 = 0, cy0 = 0, cz0 = 0;
+    for (let i = 0; i < n; i++) { cx0 += tr[i * 3]; cy0 += tr[i * 3 + 1]; cz0 += tr[i * 3 + 2]; }
+    cx0 /= n; cy0 /= n; cz0 /= n;
+    const raw = [];
+    for (let i = 0; i < n; i++) {
+      const X = tr[i * 3] - cx0, Y = tr[i * 3 + 1] - cy0, Z = tr[i * 3 + 2] - cz0;
+      const x1 = X * cy - Y * sy, y1 = X * sy + Y * cy, z2 = y1 * sp + Z * cp;
+      raw.push([x1, -z2]);
+    }
+    const xs = raw.map((p) => p[0]), zs = raw.map((p) => p[1]);
+    const s = Math.min((W - 40) / (Math.max(...xs) - Math.min(...xs)), (Hh - 26) / (Math.max(...zs) - Math.min(...zs)));
+    const ox = W / 2 - s * (Math.max(...xs) + Math.min(...xs)) / 2, oy = Hh / 2 - s * (Math.max(...zs) + Math.min(...zs)) / 2;
+    const pts = simplify(raw.map(([x, z]) => [ox + s * x, oy + s * z]), 0.18);
+    S("path", { d: "M" + pts.map((p) => p.map((v) => v.toFixed(1)).join(" ")).join("L"), fill: "none", stroke: "url(#flow)", "stroke-width": 0.42, opacity: 0.9 }, svg);
+    // the twins: a short stretch of trajectory and a comet head
+    const k = Math.floor(pts.length * 0.62);
+    S("path", { d: "M" + pts.slice(k - 26, k).map((p) => p.map((v) => v.toFixed(1)).join(" ")).join("L"), fill: "none", stroke: "#af3a03", "stroke-width": 1.2, "stroke-linecap": "round" }, svg);
+    S("circle", { cx: pts[k - 1][0], cy: pts[k - 1][1], r: 2.4, fill: "#af3a03", stroke: "#fbf1c7", "stroke-width": 0.8 }, svg);
+    S("path", { d: "M14 170v-14M14 170h14", stroke: "#7c6f64", "stroke-width": 0.7, fill: "none" }, svg);
+    label(svg, 31, 172.5, "x", { "font-size": 7, "font-style": "italic", fill: "#7c6f64" });
+    label(svg, 11.5, 153, "z", { "font-size": 7, "font-style": "italic", fill: "#7c6f64" });
+  })();
+
+  // work + other experience
+  function chord(r, sp = 9, w = 66) {
+    const svg = S("svg", { class: "chord", width: w, height: 14, viewBox: `0 0 ${w} 14` });
+    S("path", { d: `M1 7H${w - 1}`, stroke: "#d5c4a1", "stroke-width": 0.5 }, svg);
+    KEYS.forEach((f, i) => {
+      const k = r.skills.filter((id) => C.skillIndex[id].fam === f).length;
+      S("circle", { cx: 6 + i * sp, cy: 7, r: k ? (1.1 + 0.9 * Math.sqrt(k)).toFixed(2) : 0.8, style: `fill:${k ? famVar(f) : "var(--line2)"}` }, svg);
+    });
+    return svg;
+  }
+  const jobs = document.getElementById("jobs");
+  for (const r of C.CAREER.filter((c) => c.main)) {
+    const tags = H("ul", { class: "tags" }, r.skills.slice().sort((p, q) => KEYS.indexOf(C.skillIndex[p].fam) - KEYS.indexOf(C.skillIndex[q].fam))
+      .map((id) => H("li", { style: `--c:${famVar(C.skillIndex[id].fam)}`, text: C.skillIndex[id].abbr })));
+    jobs.append(H("div", { class: "job" },
+      H("div", { class: "when", html: `${ym(r.start)} — ${ym(r.end)}<br>${tenure(C.years(r.start), end(r))}` }),
+      H("div", {}, H("h4", { text: r.role }), H("p", { class: "org", html: `${esc(r.where)} <span>· ${esc(r.org.toLowerCase())}</span>` }), H("p", { class: "txt", text: r.text }), tags),
+      chord(r)));
+  }
+  const other = document.getElementById("other");
+  for (const r of C.CAREER.filter((c) => !c.main && c.group !== "education")) {
+    other.append(H("li", {}, H("span", { class: "r", html: `${esc(r.role)}${r.where ? ` <span>· ${esc(r.short || r.where)}</span>` : ""}` }),
+      H("span", { class: "d", text: `${ym(r.start)} — ${ym(r.end)} · ${tenure(C.years(r.start), end(r))}` }), r.text ? H("span", { class: "x", text: r.text }) : null));
+  }
+
+  // fig. 2 — piano roll, static
+  (() => {
+    const svg = document.getElementById("score");
+    const W = 700, X0 = 262, X1 = 538, CHX = 556, CHS = 10, rowH = 10.9;
+    const t0 = 2010.4, t1 = Math.max(NOW, 2026.5) + 0.5, X = (t) => X0 + ((t - t0) / (t1 - t0)) * (X1 - X0);
+    let y = 22;
+    const fs = { "font-size": 8.2 };
+    label(svg, 0, 10, "role", { ...fs, fill: "#a89984", "letter-spacing": 0.8 });
+    label(svg, 150, 10, "where", { ...fs, fill: "#a89984", "letter-spacing": 0.8 });
+    label(svg, (X0 + X1) / 2, 10, "tenure", { ...fs, fill: "#a89984", "text-anchor": "middle" });
+    label(svg, CHX, 10, "chord", { ...fs, fill: "#a89984" });
+    label(svg, W, 10, "dates", { ...fs, fill: "#a89984", "text-anchor": "end" });
+    const rows = [];
+    for (const g of Object.keys(C.GROUPS)) {
+      label(svg, 0, y + 6, g.toUpperCase(), { "font-size": 6.8, "letter-spacing": 1.3, style: `fill:var(--${C.GROUPS[g]})` });
+      y += 10;
+      for (const r of C.CAREER.filter((c) => c.group === g)) { rows.push([r, y + 4]); y += rowH; }
+      y += 2;
+    }
+    const pooledY = y + 9, axisY = pooledY + 14, Hh = axisY + 18;
+    svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`);
+    for (let yr = 2010; yr <= t1; yr += 2) if (X(yr) >= X0) S("path", { d: `M${X(yr).toFixed(1)} 16V${axisY}`, stroke: "#d5c4a1", "stroke-width": 0.5, "stroke-dasharray": "1 2.5" }, svg);
+    const xn = X(NOW);
+    S("path", { d: `M${xn.toFixed(1)} 16V${axisY}`, stroke: "#7c6f64", "stroke-width": 0.7, "stroke-dasharray": "2.5 2.5" }, svg);
+    for (const [r, yy] of rows) {
+      const a = C.years(r.start), b = end(r), col = `var(--${C.GROUPS[r.group]})`, xa = X(a), xb = X(b);
+      S("path", { d: `M${X0 - 6} ${yy}H${X1 + 6}M${CHX - 4} ${yy}H${CHX + 6 * CHS + 4}`, stroke: "#d5c4a1", "stroke-width": 0.45 }, svg);
+      label(svg, 0, yy + 3, r.roleShort || r.role, { ...fs, fill: r.group === "before data" ? "#7c6f64" : "#504945" });
+      label(svg, 150, yy + 3, r.short || r.where, { ...fs, fill: "#7c6f64" });
+      label(svg, W, yy + 3, `${ym(r.start)}–${ym(r.end)}`, { "font-size": 7.6, fill: "#a89984", "text-anchor": "end" });
+      S("rect", { x: xa.toFixed(1), y: yy - 2, width: Math.max(1.2, xb - xa).toFixed(1), height: 4, rx: 2, style: `fill:${col}`, opacity: 0.85 }, svg);
+      S("ellipse", { cx: (xa + 1).toFixed(1), cy: yy, rx: 4, ry: 2.9, transform: `rotate(-24 ${(xa + 1).toFixed(1)} ${yy})`, style: `fill:${col}` }, svg);
+      if (!r.end) S("path", { d: `M${(xb + 5).toFixed(1)} ${yy}l-5 -3v6z`, style: `fill:${col}` }, svg);
+      else S("path", { d: `M${xb.toFixed(1)} ${yy - 3}v6`, style: `stroke:${col}`, "stroke-width": 1 }, svg);
+      KEYS.forEach((f, i) => {
+        const k = r.skills.filter((id) => C.skillIndex[id].fam === f).length;
+        S("circle", { cx: CHX + i * CHS, cy: yy, r: k ? (1.2 + 1.0 * Math.sqrt(k)).toFixed(2) : 0.8, style: `fill:${k ? famVar(f) : "var(--line2)"}` }, svg);
+      });
+    }
+    const pa = X(C.years(C.POOLED.start));
+    S("path", { d: `M0 ${pooledY - 9}H${W}`, stroke: "#d5c4a1", "stroke-width": 0.6 }, svg);
+    S("path", { d: `M${pa} ${pooledY}L${(pa + xn) / 2} ${pooledY - 4.5}L${xn} ${pooledY}L${(pa + xn) / 2} ${pooledY + 4.5}z`, fill: "#3c3836" }, svg);
+    label(svg, 0, pooledY + 3, "pooled estimate", { ...fs, "font-weight": 700, fill: "#3c3836" });
+    label(svg, 150, pooledY + 3, "data & ml", { ...fs, fill: "#7c6f64" });
+    label(svg, W, pooledY + 3, `${ym(C.POOLED.start)}–now · ${tenure(C.years(C.POOLED.start), NOW)}`, { "font-size": 7.6, fill: "#a89984", "text-anchor": "end" });
+    S("path", { d: `M${X0} ${axisY}H${X1}`, stroke: "#7c6f64", "stroke-width": 0.7 }, svg);
+    for (let yr = 2010; yr <= t1; yr += 2) {
+      if (X(yr) < X0) continue;
+      S("path", { d: `M${X(yr).toFixed(1)} ${axisY}v3`, stroke: "#7c6f64", "stroke-width": 0.7 }, svg);
+      label(svg, X(yr), axisY + 11, String(yr), { "font-size": 7, fill: "#a89984", "text-anchor": "middle" });
+    }
+  })();
+
+  // fig. 3 — the atlas, static
+  (() => {
+    const svg = document.getElementById("atlas");
+    const R0 = 44, R1 = 160, Y0 = 2017, Y1 = 2027;
+    const rad = (t) => R0 + Math.pow((clamp(t, Y0, Y1) - Y0) / (Y1 - Y0), 0.75) * (R1 - R0);
+    const by = Object.fromEntries(KEYS.map((f) => [f, C.SKILLS.filter((s) => s.fam === f).sort((p, q) => p.firstLight - q.firstLight || p.name.localeCompare(q.name))]));
+    const wts = KEYS.map((f) => by[f].length + 1.4), tot = wts.reduce((a, b) => a + b, 0);
+    let acc = -Math.PI / 2 - (wts[0] / tot) * Math.PI;
+    const sec = {};
+    KEYS.forEach((f, i) => { const sp = (wts[i] / tot) * 2 * Math.PI; sec[f] = { a0: acc, a1: acc + sp, mid: acc + sp / 2 }; acc += sp; });
+    const r = rng(23), stars = [];
+    for (const f of KEYS) {
+      const list = by[f], { a0, a1 } = sec[f], u = (a1 - a0) / (list.length + 1.4);
+      list.forEach((s, i) => {
+        const ang = a0 + u * (1.2 + i) + (r() - 0.5) * u * 0.28;
+        const twin = i > 0 && Math.abs(s.firstLight - list[i - 1].firstLight) < 0.3;
+        const rr = rad(s.firstLight) + (twin ? (i % 2 ? 5.5 : -4.5) : 0) + (r() - 0.5) * 4;
+        stars.push({ s, f, ang, rr, x: Math.cos(ang) * rr, y: Math.sin(ang) * rr, size: 1.2 + 0.95 * Math.sqrt(s.magnitude) });
+      });
+    }
+    S("circle", { r: R0 - 3, fill: "#f2e5bc", opacity: 0.6 }, svg);
+    for (let yr = Y0; yr <= 2026; yr++) S("circle", { r: rad(yr).toFixed(1), fill: "none", stroke: "#d5c4a1", "stroke-width": 0.45, "stroke-dasharray": "0.8 2.2" }, svg);
+    S("circle", { r: rad(NOW).toFixed(1), fill: "none", stroke: "#af3a03", "stroke-width": 0.6, opacity: 0.6 }, svg);
+    for (const f of KEYS) { const a = sec[f].a0; S("path", { d: `M${Math.cos(a) * 16} ${Math.sin(a) * 16}L${Math.cos(a) * (R1 + 6)} ${Math.sin(a) * (R1 + 6)}`, stroke: "#d5c4a1", "stroke-width": 0.4, "stroke-dasharray": "0.8 3" }, svg); }
+    const RIM = R1 + 22;
+    S("circle", { r: RIM, fill: "none", stroke: "#a89984", "stroke-width": 0.5 }, svg);
+    S("circle", { r: RIM + 7, fill: "none", stroke: "#a89984", "stroke-width": 0.5 }, svg);
+    let ticks = "";
+    for (let dg = 0; dg < 360; dg += 5) { const a = (dg * Math.PI) / 180, l = dg % 30 ? 3 : 7; ticks += `M${(Math.cos(a) * RIM).toFixed(1)} ${(Math.sin(a) * RIM).toFixed(1)}L${(Math.cos(a) * (RIM + l)).toFixed(1)} ${(Math.sin(a) * (RIM + l)).toFixed(1)}`; }
+    S("path", { d: ticks, stroke: "#a89984", "stroke-width": 0.45 }, svg);
+    // family initials on the rim
+    for (const f of KEYS) {
+      const a = sec[f].mid, rr = R1 + 13;
+      label(svg, Math.cos(a) * rr, Math.sin(a) * rr + 2.4, FAM[f].latin.split(" ")[0], { "font-size": 6.6, "font-style": "italic", fill: "#7c6f64", "text-anchor": "middle" });
+    }
+    for (const f of KEYS) {
+      const list = stars.filter((st) => st.f === f);
+      for (let i = 1; i < list.length; i++) S("path", { d: `M${list[i - 1].x.toFixed(1)} ${list[i - 1].y.toFixed(1)}L${list[i].x.toFixed(1)} ${list[i].y.toFixed(1)}`, style: `stroke:${famVar(f)}`, "stroke-width": 0.5, "stroke-dasharray": "1.6 1.6", opacity: 0.7 }, svg);
+    }
+    for (const st of stars) {
+      const g = S("g", { transform: `translate(${st.x.toFixed(1)} ${st.y.toFixed(1)})` }, svg), col = famVar(st.f);
+      S("circle", { r: st.size * 2.5, style: `fill:${col}`, opacity: 0.16 }, g);
+      if (st.s.magnitude >= 4) { const l = st.size * 3.2; S("path", { d: `M${-l} 0H${l}M0 ${-l}V${l}`, style: `stroke:${col}`, "stroke-width": 0.45, opacity: 0.7 }, g); }
+      S("circle", { r: st.size, style: `fill:${col}` }, g);
+    }
+    // names, placed greedily like the site's atlas
+    const CW = 3.6, LH = 6.4, placed = [];
+    const hit = (b) => placed.some((p) => !(b[2] < p[0] || b[0] > p[2] || b[3] < p[1] || b[1] > p[3]));
+    const onStar = (b, me) => stars.some((o) => o !== me && (clamp(o.x, b[0], b[2]) - o.x) ** 2 + (clamp(o.y, b[1], b[3]) - o.y) ** 2 < (o.size + 0.8) ** 2);
+    for (const st of stars.slice().sort((a, b) => b.s.magnitude - a.s.magnitude || a.rr - b.rr)) {
+      const A = Math.atan2(st.y, st.x), w = st.s.abbr.length * CW + 1, dd = st.size + 2.4;
+      for (const da of [0, 0.55, -0.55, 1.15, -1.15, 1.75, -1.75, Math.PI]) {
+        const a = A + da, cx = Math.cos(a), cy = Math.sin(a), ax = st.x + cx * dd, ay = st.y + cy * dd;
+        const x0 = cx > 0.35 ? ax : cx < -0.35 ? ax - w : ax - w / 2, y0 = cy > 0.35 ? ay : cy < -0.35 ? ay - LH : ay - LH / 2;
+        const b = [x0, y0, x0 + w, y0 + LH];
+        if (!hit(b) && !onStar(b, st) && [[b[0], b[1]], [b[2], b[3]], [b[0], b[3]], [b[2], b[1]]].every(([x, y]) => x * x + y * y < (R1 + 4) ** 2)) {
+          placed.push(b); label(svg, b[0] + 0.5, b[1] + LH * 0.8, st.s.abbr, { "font-size": 6, fill: "#504945" }); break;
+        }
+      }
+    }
+    label(svg, 0, -2, "before data", { "font-size": 6.4, "font-style": "italic", fill: "#7c6f64", "text-anchor": "middle" });
+    label(svg, 0, 6.5, "2010 — 2017", { "font-size": 5.4, fill: "#a89984", "text-anchor": "middle" });
+    for (const yr of [2018, 2020, 2022, 2024, 2026]) {
+      const a = sec[KEYS[0]].a0;
+      label(svg, Math.cos(a) * rad(yr), Math.sin(a) * rad(yr) + 1.8, String(yr), { "font-size": 5, fill: "#a89984", "text-anchor": "middle", style: "paint-order:stroke;stroke:#fbf1c7;stroke-width:2px" });
+    }
+    const LV = { basic: 1, intermediate: 2, good: 3 };
+    document.getElementById("prof").innerHTML = C.SKILLS.filter((s) => s.level).map((s) =>
+      `<li><span>${esc(s.name)}</span><span class="lv">${s.level}</span><span class="bar">${[1, 2, 3, 4].map((i) => `<i class="${i <= LV[s.level] ? "f" : ""}"></i>`).join("")}</span></li>`).join("");
+    document.getElementById("stack").innerHTML = KEYS.map((f) => `<p><svg width="7" height="7" style="margin-right:4px"><circle cx="3.5" cy="3.5" r="3" style="fill:${famVar(f)}"/></svg><i>${esc(FAM[f].latin)}</i> <span class="fam">· ${esc(FAM[f].label)}</span><br>${by[f].map((s) => esc(s.name)).join(", ")}</p>`).join("");
+  })();
+
+  // fig. 5 — languages as signals
+  (() => {
+    const host = document.getElementById("langs");
+    C.LANGUAGES.forEach((lang, i) => {
+      const w = 170, h = 22, mid = h / 2, rr = rng(31 + i), nz = noise1(50 + i);
+      const harm = [1, 0.25 + rr() * 0.4, rr() * 0.3, rr() * 0.2].map((a, k) => ({ a, f: k + 1, ph: rr() * 6.28 }));
+      const f0 = 2.2 + i * 0.55 + rr() * 0.4, lvl = lang.level / 5, A = lvl * (mid - 2), N = (1 - lvl) * mid * 0.5 + 0.3;
+      const pts = [];
+      for (let x = 0; x <= w; x += 1) {
+        const u = x / w;
+        let v = 0;
+        for (const hm of harm) v += hm.a * Math.sin(2 * Math.PI * f0 * hm.f * u + hm.ph);
+        pts.push([x, mid - (v / 1.5) * A * (0.85 + 0.15 * Math.sin(u * Math.PI)) + nz(x * 0.5) * N + nz(x * 2.1) * N * 0.35]);
+      }
+      const svg = `<svg width="100%" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><path d="M0 ${mid}H${w}" stroke="#d5c4a1" stroke-width=".4" stroke-dasharray="1 2"/><path d="M${pts.map((p) => p.map((v) => v.toFixed(1)).join(" ")).join("L")}" fill="none" stroke="#504945" stroke-width=".8" vector-effect="non-scaling-stroke"/></svg>`;
+      host.insertAdjacentHTML("beforeend", `<div class="lang"><div class="nm">${esc(lang.script)}<small>${esc(lang.name.toLowerCase())}</small></div>${svg}<div class="lv"><b>${esc(lang.note)}</b>level ${lang.level}/5</div></div>`);
+    });
+  })();
+
+  document.documentElement.dataset.ready = "1";
+})();
+</script>
+</body>
+</html>
