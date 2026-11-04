@@ -473,7 +473,7 @@
   // when the tallest slot is full the floor opens and it starts over (about a minute and a half)
   function initGalton() {
     const cv = $("#galton");
-    const ROWS = 14, HOP = 0.1, EVERY = 0.09, CAP = 22, START = 0.4; // CAP: balls at the top of the bell when full
+    const ROWS = 14, HOP = 0.1, EVERY = 0.09, CAP = 24, START = 0.4; // CAP: balls at the top of the bell when full
     const BOUNCE = 0.6; // the last bounce scatters by N(0, (0.6 peg)²), enough to smooth the binomial's steps away
     const rand = rng(17);
     const choose = (n, k) => { let c = 1; for (let i = 1; i <= k; i++) c = (c * (n - i + 1)) / i; return c; };
@@ -498,7 +498,7 @@
       ({ ctx, w: W, h: Hh } = fit(cv));
       const dpr = cv.width / W;
       for (const c of [stat, pile]) { c.width = cv.width; c.height = cv.height; c.getContext("2d").setTransform(dpr, 0, 0, dpr, 0, 0); }
-      const dx = clamp(W * 0.053, 20, 64), r = clamp(W / 420, 1.8, 2.9), colW = 2 * r + 1.2;
+      const dx = clamp(W * 0.0477, 18, 58), r = clamp(W / 420, 1.8, 2.9), colW = 2 * r + 1.2;
       const top = 26, pegTop = top + 24, floor = Hh - 26, binTop = floor - (CAP + 1) * 2 * r;
       const dy = clamp((binTop - pegTop - 6) / (ROWS - 0.5), 10, 34);
       const n = Math.floor((W - 8) / colW);
@@ -532,15 +532,22 @@
       c.moveTo(g.cx - 26, g.top - 14); c.lineTo(g.cx - 4, g.top + 6);
       c.moveTo(g.cx + 26, g.top - 14); c.lineTo(g.cx + 4, g.top + 6);
       c.stroke();
-      c.fillStyle = rgba(P.faint, 0.5);
+      // the pegs form a triangle, as on a real board: one under the funnel, then one more each row
+      c.fillStyle = rgba(P.faint, 0.55);
       const pr = clamp(g.r * 0.55, 1, 1.8);
-      for (let i = 0; i < ROWS; i++) {
-        const off = (i % 2) * 0.5, y = pegY(i);
-        for (let k = -60; k <= 60; k++) {
-          const x = g.cx + (k + off) * g.dx;
-          if (x > 3 && x < W - 3) { c.beginPath(); c.arc(x, y, pr, 0, 7); c.fill(); }
-        }
+      for (let i = 0; i < ROWS; i++) for (let j = 0; j <= i; j++) {
+        c.beginPath(); c.arc(g.cx + (j - i / 2) * g.dx, pegY(i), pr, 0, 7); c.fill();
       }
+      // and its walls, in pencil, from the funnel's mouth down past the last row
+      const wall = (i) => (i / 2 + 0.75) * g.dx, yEnd = pegY(ROWS - 1) + g.dy * 0.6;
+      c.strokeStyle = rgba(P.faint, 0.45); c.lineWidth = 0.8;
+      c.beginPath();
+      for (const sgn of [-1, 1]) {
+        c.moveTo(g.cx + sgn * 4, g.top + 6);
+        c.lineTo(g.cx + sgn * wall(0), pegY(0) - g.dy * 0.4);
+        c.lineTo(g.cx + sgn * (wall(ROWS - 1) + 0.3 * g.dx), yEnd);
+      }
+      c.stroke();
       c.strokeStyle = rgba(P.faint, 0.55); c.lineWidth = 0.8;
       c.beginPath(); c.moveTo(4, g.floor + 0.5); c.lineTo(W - 4, g.floor + 0.5); c.stroke();
       // the bell the slots fill to: the expected pile when the tallest slot holds CAP balls

@@ -99,6 +99,8 @@ i, em { font-style: italic; }
 .mono-mark { display: inline-flex; align-items: center; min-width: 13ch; font-weight: 700; font-size: 14px; color: var(--fg); text-decoration: none; letter-spacing: .02em; white-space: nowrap; }
 .mono-mark:hover { color: var(--fg); }
 .mono-mark .mm-dot { color: var(--red); }
+.mono-mark .mm { transition: color .35s ease; }
+.mono-mark:hover .mm, .mono-mark:focus-visible .mm, .mm-open .mono-mark .mm { color: var(--red); }
 .mm-x { display: inline-flex; align-items: center; }
 .mm-x i {
   display: inline-block; overflow: hidden; width: 0; font-style: normal; opacity: 0; transform: translateY(.5em);

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Where the ideas came from · Mark Akritas</title>
+<meta name="description" content="Credits and references for markakritas.github.io: the techniques, fonts, colours, inspirations and the science behind every figure.">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try { if (localStorage.getItem("theme") === "dark") document.documentElement.dataset.theme = "dark"; } catch (e) {}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<style>
+  .credits .sec { grid-template-columns: minmax(0, 1fr); padding-block: clamp(40px, 6vw, 72px) 0; }
+  .credits .lede { max-width: 66ch; }
+  .refs { list-style: none; padding: 0; margin: 0; display: grid; }
+  .refs li { display: grid; grid-template-columns: minmax(0, 24ch) minmax(0, 1fr); gap: 2px 28px; padding: 12px 0; border-top: 1px solid var(--line2); }
+  .refs li:last-child { border-bottom: 1px solid var(--line2); }
+  .refs b { font-weight: 700; color: var(--fg); }
+  .refs .who { display: block; font-size: 12px; color: var(--muted); font-style: italic; }
+  .refs .what { color: var(--fg2); font-size: 14px; }
+  .refs .what .fig { color: var(--faint); font-size: 12px; white-space: nowrap; }
+  .back { margin-top: 56px; font-size: 13px; }
+  @media (max-width: 680px) { .refs li { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="paper" aria-hidden="true"></div>
+<header class="bar scrolled">
+  <a class="mono-mark" href="../" aria-label="back to the resume" style="min-width:0"><span class="mm">Μ</span><span class="mm-dot">·</span><span class="mm">Α</span></a>
+  <span style="margin-left:auto"><a href="../">← back to the resume</a></span>
+</header>
+
+<main class="page credits">
+<section class="sec" id="top">
+  <div class="sec-head"><span class="num">∴</span><h2>where the ideas came from</h2><span class="rule"></span><span class="ref">credits</span></div>
+  <p class="prose lede">Nothing on the resume was copied from another website: every figure is written from scratch. The ideas, though, all came from somewhere. Here they are, from how the page is built to the science it draws.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="num">§0</span><h2>tech</h2><span class="rule"></span></div>
+  <ul class="refs">
+    <li><b>HTML, CSS, canvas &amp; SVG</b><span class="what">no frameworks and no build step; hosted on GitHub Pages, content in two JSON files.</span></li>
+    <li><b>Runge–Kutta (RK4)</b><span class="what">integrating the Lorenz twins and the double pendulum. <span class="fig">figs. 1, e</span></span></li>
+    <li><b>Ramer–Douglas–Peucker</b><span class="what">simplifying curves, as in the profile README's build script.</span></li>
+    <li><b>mulberry32</b><span class="what">the small seeded random-number generator behind every sketch.</span></li>
+    <li><b>Box–Muller</b><span class="what">the bounce off the galton board's last peg.</span></li>
+    <li><b>Abramowitz &amp; Stegun 7.1.26</b><span class="what">the normal CDF that shapes the red bell.</span></li>
+    <li><b>Catmull–Rom splines</b><span class="what">smooth curves through hand-placed points: the Ararat skyline, the river.</span></li>
+    <li><b>marching squares</b><span class="what">the contour lines of the thesis sketch. <span class="fig">fig. d</span></span></li>
+    <li><b>discrete Fourier transform</b><span class="what">the rotating circles that redraw Ararat. <span class="fig">fig. 6</span></span></li>
+    <li><b>Unicode Braille patterns</b><span class="what">the Lorenz attractor in the terminal card.</span></li>
+    <li><b>fontTools · headless Chrome</b><span class="what">subsetting the fonts; printing the preprint PDF.</span></li>
+  </ul>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="num">§1</span><h2>fonts</h2><span class="rule"></span><span class="ref">all SIL OFL 1.1</span></div>
+  <ul class="refs">
+    <li><span><b><a href="https://github.com/subframe7536/maple-font">Maple Mono</a></b><span class="who">the Maple Mono project authors</span></span><span class="what">the face of the whole page, as of the profile README.</span></li>
+    <li><span><b><a href="https://github.com/JetBrains/JetBrainsMono">JetBrains Mono</a></b><span class="who">JetBrains</span></span><span class="what">the fallback for maths symbols and arrows.</span></li>
+    <li><span><b><a href="https://fonts.google.com/specimen/UnifrakturMaguntia">UnifrakturMaguntia</a></b><span class="who">j. 'mach' wust, after Peter Wiegel</span></span><span class="what">the fraktur for the German thinkers on the philosophy map.</span></li>
+    <li><span><b><a href="https://github.com/notofonts/armenian">Noto Serif Armenian</a></b><span class="who">the Noto project authors</span></span><span class="what">Մասիս and Սիս under the peaks of Ararat.</span></li>
+  </ul>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="num">§2</span><h2>colours</h2><span class="rule"></span></div>
+  <ul class="refs">
+    <li><span><b><a href="https://github.com/morhetz/gruvbox">gruvbox</a></b><span class="who">Pavel Pertsev (morhetz)</span></span><span class="what">the light and dark palettes, by way of the profile README's paper.py; the paper grain is a softer version of the profile's.</span></li>
+  </ul>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="num">§3</span><h2>design &amp; inspiration</h2><span class="rule"></span></div>
+  <ul class="refs">
+    <li><b><a href="https://github.com/markakritas/markakritas">the profile README</a></b><span class="what">gruvbox on grain-paper cards with crop marks, Maple Mono, the Lorenz figure, the periodic table of the stack and its noble-gas pun, the forest-plot career that became the piano roll, the network of thinkers, the quotes and equations of the day, and the NewsPEPper and jumpwise logos.</span></li>
+    <li><span><b><a href="https://giorgialupi.com">Giorgia Lupi</a></b><span class="who">the inspiration for the whole piece</span></span><span class="what">data humanism and the hand-drawn feel; her <a href="https://giorgialupi.com/famous-writers-sleep-habit-and-productivity">famous writers' sleep habits</a>, <a href="https://giorgialupi.com/visualizing-painters-lives">painters' lives</a> (with Michela Buttignol), and the <a href="https://www.themarginalian.org/2012/11/29/giorgia-lupi-noble-prizes-visualization/">Nobel prize visualisation</a>, after which the flow is drawn. <span class="fig">fig. 3c</span></span></li>
+    <li><b>Anthropic's logo animation</b><span class="what">the monogram that unfolds from Μ·Α into ΜΑΡΚ·ΑΚΡΙΤΑΣ.</span></li>
+    <li><span><b><a href="https://edwardtufte.github.io/tufte-css/">Edward Tufte · Tufte CSS</a></b></span><span class="what">margin notes, margin figures, quiet typography.</span></li>
+    <li><b><a href="https://arxiv.org">arXiv preprints</a></b><span class="what">the running head, the revision date, § numbers and fig. N captions.</span></li>
+  </ul>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="num">§4</span><h2>kindred sites</h2><span class="rule"></span><span class="ref">in the same spirit</span></div>
+  <ul class="refs">
+    <li><b><a href="https://ciechanow.ski">Bartosz Ciechanowski</a></b><span class="what">interactive explainers.</span></li>
+    <li><b><a href="https://worrydream.com">Bret Victor</a></b><span class="what">explorable explanations.</span></li>
+    <li><b><a href="https://ncase.me">Nicky Case</a></b><span class="what">playable essays.</span></li>
+    <li><b><a href="https://www.redblobgames.com">Red Blob Games</a></b><span class="what">interactive tutorials.</span></li>
+    <li><b><a href="https://maggieappleton.com">Maggie Appleton</a></b><span class="what">an illustrated personal site.</span></li>
+    <li><b><a href="https://gwern.net">Gwern</a></b><span class="what">margin notes and typography.</span></li>
+    <li><b><a href="https://distill.pub">Distill</a></b><span class="what">interactive ML articles.</span></li>
+    <li><b><a href="https://www.visualcinnamon.com">Nadieh Bremer</a></b><span class="what">data art.</span></li>
+    <li><b><a href="https://shirleywu.studio">Shirley Wu</a></b><span class="what">data art.</span></li>
+    <li><b><a href="https://www.federicafragapane.com">Federica Fragapane</a></b><span class="what">data art.</span></li>
+    <li><b><a href="https://pudding.cool">The Pudding</a></b><span class="what">visual essays.</span></li>
+  </ul>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="num">§5</span><h2>science &amp; graphs</h2><span class="rule"></span></div>
+  <ul class="refs">
+    <li><span><b>the Lorenz attractor</b><span class="who">Edward Lorenz, Deterministic Nonperiodic Flow, 1963</span></span><span class="what">the title figure, and its largest Lyapunov exponent, λ₁ ≈ 0.906. <span class="fig">fig. 1</span></span></li>
+    <li><span><b>the bean machine</b><span class="who">Francis Galton</span></span><span class="what">the galton board behind the abstract.</span></li>
+    <li><span><b>the logistic map</b><span class="who">Robert May, 1976 · Mitchell Feigenbaum</span></span><span class="what">period doubling into chaos, behind the trajectory.</span></li>
+    <li><b>the golden rectangle</b><span class="what">the spiral sketch on the title page.</span></li>
+    <li><b>forest plots · piano rolls</b><span class="what">the career figure: a meta-analysis plot in the profile README, a piano roll with musical dynamics (p, mf, f) here. <span class="fig">fig. 2</span></span></li>
+    <li><span><b>Atlas Coelestis</b><span class="who">John Flamsteed, 1729 · and old planispheres</span></span><span class="what">the stack as a sky. <span class="fig">fig. 3a</span></span></li>
+    <li><span><b>the periodic table</b><span class="who">Dmitri Mendeleev, 1869</span></span><span class="what">the stack as elements, radioactive series included. <span class="fig">fig. 3b</span></span></li>
+    <li><span><b>Sankey diagrams</b><span class="who">Matthew Sankey, 1898</span></span><span class="what">the stack as a flow, with Lupi's hairline strands. <span class="fig">fig. 3c</span></span></li>
+    <li><b>oscilloscope traces</b><span class="what">languages as signals. <span class="fig">fig. 5</span></span></li>
+    <li><b>neofetch · Linux ricing</b><span class="what">the terminal card and its colour swatches.</span></li>
+    <li><b>the double pendulum</b><span class="what">deterministic, unrepeatable. <span class="fig">fig. e</span></span></li>
+    <li><span><b>Fourier epicycles</b><span class="who">as 3Blue1Brown popularised them, But what is a Fourier series?, 2019</span></span><span class="what">Ararat redrawn by rotating circles. <span class="fig">fig. 6</span></span></li>
+    <li><b>lettering</b><span class="what">the Armenian eternity sign, fraktur for German, Roman inscription capitals for Latin (AVGVSTINVS).</span></li>
+  </ul>
+  <p class="back"><a href="../">← back to the resume</a></p>
+</section>
+</main>
+</body>
+</html>

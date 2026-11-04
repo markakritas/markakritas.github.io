@@ -21,6 +21,7 @@ resume/
   mark-akritas-resume.pdf            the classic, professional resume
   mark-akritas-resume-preprint.pdf   the preprint edition
   print.html                         its source
+credits/              where the ideas came from (the page version of the list below)
 v1/                   the first edition, 2018
 ```
 
@@ -54,3 +55,68 @@ python3 -m http.server 8000 &
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --no-pdf-header-footer \
   --virtual-time-budget=4000 --print-to-pdf=resume/mark-akritas-resume-preprint.pdf http://localhost:8000/resume/print.html
 ```
+
+## where the ideas came from
+
+No code was copied from another website; every figure is written from scratch. The ideas all came from somewhere, though, and they are listed here and on [the credits page](https://markakritas.github.io/credits/).
+
+### tech
+
+- **HTML, CSS, canvas & SVG**: no frameworks and no build step; hosted on GitHub Pages, content in two JSON files.
+- **Runge–Kutta (RK4)**: integrating the Lorenz twins and the double pendulum.
+- **Ramer–Douglas–Peucker**: simplifying curves, as in the profile README's build script.
+- **mulberry32**: the small seeded random-number generator behind every sketch.
+- **Box–Muller**: the bounce off the galton board's last peg.
+- **Abramowitz & Stegun 7.1.26**: the normal CDF that shapes the red bell.
+- **Catmull–Rom splines**: smooth curves through hand-placed points (the Ararat skyline, the river).
+- **marching squares**: the contour lines of the thesis sketch.
+- **discrete Fourier transform**: the rotating circles that redraw Ararat.
+- **Unicode Braille patterns**: the Lorenz attractor in the terminal card.
+- **fontTools, headless Chrome**: subsetting the fonts; printing the preprint PDF.
+
+### fonts (all SIL OFL 1.1)
+
+- [Maple Mono](https://github.com/subframe7536/maple-font), by the Maple Mono project authors: the face of the whole page, as of the profile README.
+- [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono), by JetBrains: the fallback for maths symbols and arrows.
+- [UnifrakturMaguntia](https://fonts.google.com/specimen/UnifrakturMaguntia), by j. 'mach' wust after Peter Wiegel: the fraktur for the German thinkers on the philosophy map.
+- [Noto Serif Armenian](https://github.com/notofonts/armenian), by the Noto project authors: Մասիս and Սիս under the peaks of Ararat.
+
+### colours
+
+- [gruvbox](https://github.com/morhetz/gruvbox), by Pavel Pertsev (morhetz): the light and dark palettes, by way of the profile README's `paper.py`; the paper grain is a softer version of the profile's.
+
+### design & inspiration
+
+- [The profile README](https://github.com/markakritas/markakritas): gruvbox on grain-paper cards with crop marks, Maple Mono, the Lorenz figure, the periodic table of the stack and its noble-gas pun, the forest-plot career that became the piano roll, the network of thinkers, the quotes and equations of the day, and the NewsPEPper and jumpwise logos.
+- [Giorgia Lupi](https://giorgialupi.com), the inspiration for the whole piece: data humanism and the hand-drawn feel; her [famous writers' sleep habits](https://giorgialupi.com/famous-writers-sleep-habit-and-productivity), [painters' lives](https://giorgialupi.com/visualizing-painters-lives) (with Michela Buttignol), and the [Nobel prize visualisation](https://www.themarginalian.org/2012/11/29/giorgia-lupi-noble-prizes-visualization/), after which the flow (fig. 3c) is drawn.
+- Anthropic's logo animation: the monogram that unfolds from Μ·Α into ΜΑΡΚ·ΑΚΡΙΤΑΣ.
+- [Edward Tufte, Tufte CSS](https://edwardtufte.github.io/tufte-css/): margin notes, margin figures, quiet typography.
+- [arXiv](https://arxiv.org) preprints: the running head, the revision date, § numbers and fig. N captions.
+
+### kindred sites
+
+- [Bartosz Ciechanowski](https://ciechanow.ski): interactive explainers.
+- [Bret Victor](https://worrydream.com): explorable explanations.
+- [Nicky Case](https://ncase.me): playable essays.
+- [Red Blob Games](https://www.redblobgames.com): interactive tutorials.
+- [Maggie Appleton](https://maggieappleton.com): an illustrated personal site.
+- [Gwern](https://gwern.net): margin notes and typography.
+- [Distill](https://distill.pub): interactive ML articles.
+- [Nadieh Bremer](https://www.visualcinnamon.com), [Shirley Wu](https://shirleywu.studio), [Federica Fragapane](https://www.federicafragapane.com): data art.
+- [The Pudding](https://pudding.cool): visual essays.
+
+### science & graphs
+
+- **The Lorenz attractor**: Edward Lorenz, *Deterministic Nonperiodic Flow* (1963); the title figure and its largest Lyapunov exponent, λ₁ ≈ 0.906 (fig. 1).
+- **The bean machine**: Francis Galton; the galton board behind the abstract.
+- **The logistic map**: Robert May (1976) and Mitchell Feigenbaum; period doubling into chaos, behind the trajectory.
+- **The golden rectangle**: the spiral sketch on the title page.
+- **Forest plots and piano rolls**: the career figure, a meta-analysis plot in the profile README and a piano roll with musical dynamics (p, mf, f) here (fig. 2).
+- **Atlas Coelestis**: John Flamsteed (1729), and old planispheres; the stack as a sky (fig. 3a).
+- **The periodic table**: Dmitri Mendeleev (1869); the stack as elements, radioactive series included (fig. 3b).
+- **Sankey diagrams**: Matthew Sankey (1898); the stack as a flow, with Lupi's hairline strands (fig. 3c).
+- **Oscilloscope traces**: languages as signals (fig. 5).
+- **neofetch and Linux ricing**: the terminal card and its colour swatches.
+- **The double pendulum**: deterministic, unrepeatable (fig. e).
+- **Fourier epicycles**, as 3Blue1Brown popularised them in *But what is a Fourier series?* (2019): Ararat redrawn by rotating circles (fig. 6).
+- **Lettering**: the Armenian eternity sign, fraktur for German, Roman inscription capitals for Latin (AVGVSTINVS).
