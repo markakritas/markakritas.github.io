@@ -270,6 +270,54 @@ window.L = (() => {
     return lines;
   }
 
+  /** the stack as a flow: roles (newest first) → skill families → tools, one thread per tool per role.
+      every column stacks at `pitch` per thread, so the threads tile each bar exactly, as in a sankey.
+      returns y positions from 0 at the top of the tallest column. used by index.html and the preprint */
+  function flowLayout(C, o = {}) {
+    const { pitch = 5, roleMin = 26, roleGap = 9, famGap = 34, toolMin = 11, toolGap = 3, toolFamGap = 12, rolesTop = false } = o;
+    const KEYS = Object.keys(C.FAMILIES);
+    const roles = C.CAREER.filter((r) => r.skills.length).sort((a, b) => C.years(b.start) - C.years(a.start));
+    const tools = KEYS.flatMap((f) => C.SKILLS.filter((x) => x.fam === f && x.magnitude).sort((a, b) => a.firstLight - b.firstLight || a.name.localeCompare(b.name)));
+    const tI = new Map(tools.map((t, i) => [t.id, i])), rI = new Map(roles.map((r, i) => [r.id, i]));
+    const threads = [];
+    for (const r of roles) for (const id of r.skills.slice().sort((a, b) => tI.get(a) - tI.get(b))) threads.push({ r, t: C.skillIndex[id], f: C.skillIndex[id].fam });
+    const fams = KEYS.filter((f) => threads.some((t) => t.f === f));
+    function stack(items) {
+      let y = 0;
+      const out = new Map();
+      items.forEach((it, i) => {
+        const h = it.n * pitch, block = Math.max(h, it.min);
+        out.set(it.key, { top: y + (block - h) / 2, h, mid: y + block / 2 });
+        y += block + (i < items.length - 1 ? it.gap : 0);
+      });
+      return { out, total: y };
+    }
+    const R = stack(roles.map((r) => ({ key: r.id, n: r.skills.length, min: roleMin, gap: roleGap })));
+    const F = stack(fams.map((f) => ({ key: f, n: threads.filter((t) => t.f === f).length, min: 0, gap: famGap })));
+    const T = stack(tools.map((t, i) => ({ key: t.id, n: t.magnitude, min: toolMin, gap: tools[i + 1] && tools[i + 1].fam !== t.fam ? toolFamGap : toolGap })));
+    const H = Math.max(R.total, F.total, T.total);
+    const shift = (col, top) => {
+      const d = top ? 0 : (H - col.total) / 2;
+      for (const v of col.out.values()) { v.top += d; v.mid += d; }
+      return col.out;
+    };
+    const role = shift(R, rolesTop), fam = shift(F), tool = shift(T);
+    const slot = (list, key, base) => list.forEach((t, k) => { t[key] = base + (k + 0.5) * pitch; });
+    for (const r of roles) slot(threads.filter((t) => t.r === r), "yr", role.get(r.id).top);
+    for (const f of fams) {
+      const inF = threads.filter((t) => t.f === f), top = fam.get(f).top;
+      slot(inF.slice().sort((a, b) => rI.get(a.r.id) - rI.get(b.r.id) || tI.get(a.t.id) - tI.get(b.t.id)), "yfl", top);
+      slot(inF.slice().sort((a, b) => tI.get(a.t.id) - tI.get(b.t.id) || rI.get(a.r.id) - rI.get(b.r.id)), "yfr", top);
+    }
+    for (const t of tools) slot(threads.filter((x) => x.t === t).sort((a, b) => rI.get(a.r.id) - rI.get(b.r.id)), "yt", tool.get(t.id).top);
+    return { roles, fams, tools, threads, role, fam, tool, H, pitch };
+  }
+  /** the svg path of one thread, from a role bar's right edge to a tool bar's left edge */
+  function flowPath(t, xa, xb, xc, xd, bend = 0.43) {
+    const k1 = (xb - xa) * bend, k2 = (xd - xc) * bend, f = (v) => v.toFixed(1);
+    return `M${xa} ${f(t.yr)}C${f(xa + k1)} ${f(t.yr)} ${f(xb - k1)} ${f(t.yfl)} ${xb} ${f(t.yfl)}L${xc} ${f(t.yfr)}C${f(xc + k2)} ${f(t.yfr)} ${f(xd - k2)} ${f(t.yt)} ${xd} ${f(t.yt)}`;
+  }
+
   // ── formatting ────────────────────────────────────────────────────────
   const SUP = { "-": "⁻", 0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹" };
   const sup = (n) => String(n).replace(/[-0-9]/g, (c) => SUP[c]);
@@ -292,7 +340,7 @@ window.L = (() => {
 
   return {
     root, still, $, $$, S, H, esc, palette, rgb, rgba, mix, flow, onTheme, fit, loop, onceVisible, onResize,
-    rng, clamp, lerp, ease, noise1, lorenz, lorenzStep, simplify, spline, resample, dft, contours, braille,
+    rng, clamp, lerp, ease, noise1, lorenz, lorenzStep, simplify, spline, resample, dft, contours, braille, flowLayout, flowPath,
     sup, sci, ym, tenure, nowYears,
   };
 })();

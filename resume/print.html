@@ -33,6 +33,7 @@ a { color: inherit; text-decoration: none; }
   background-color: var(--bg); background-image: var(--grain, none); break-after: page;
 }
 .page:last-child { break-after: auto; }
+.page + .page .sec { margin-top: 10px; }
 @media print { body { background: none; } .page { margin: 0; } }
 .page::after { /* crop marks */
   content: ""; position: absolute; inset: 0; pointer-events: none; --m: #bdae93; --o: 5mm;
@@ -107,20 +108,20 @@ h1 { font-size: 34px; line-height: 1; letter-spacing: -.03em; color: var(--fg); 
 .card .u { font-size: 8.5px; color: var(--accent); margin-top: 4px; display: block; }
 
 /* page 2 */
-.score svg, .atlas svg { display: block; width: 100%; height: auto; }
+.score svg, .flowfig svg { display: block; width: 100%; height: auto; }
 .score { padding: 6px 10px 6px; }
 .score .cap { padding: 2px 2px 0; }
-.methods { display: grid; grid-template-columns: 266px 1fr; gap: 16px; align-items: start; }
-.atlas { padding: 4px; }
-.atlas .cap { padding: 0 8px 7px; }
-.side { display: grid; gap: 9px; }
+.flowfig { padding: 4px 10px 5px; }
+.flowfig .cap { padding: 2px 2px 0; }
+.flowbox { position: relative; }
+.profbox { position: absolute; left: 0; bottom: 0; width: 186px; }
 .sub { font-size: 7.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--faint); margin-bottom: 3px; }
 .key { display: grid; gap: 2px; font-size: 9px; color: var(--muted); }
 .key .k { display: flex; align-items: center; gap: 6px; }
 .key i { font-style: italic; color: var(--fg2); }
-.prof { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 14px; }
-.prof li { display: grid; grid-template-columns: 1fr auto; gap: 1px 8px; font-size: 9.5px; color: var(--fg); }
-.prof .lv { font-size: 8.5px; font-style: italic; color: var(--muted); }
+.prof { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; }
+.prof li { display: grid; grid-template-columns: 1fr auto; gap: 1px 6px; font-size: 8.6px; color: var(--fg); }
+.prof .lv { font-size: 7.6px; font-style: italic; color: var(--muted); }
 .prof .bar { grid-column: 1 / -1; display: flex; gap: 2px; height: 3.5px; }
 .prof .bar i { flex: 1; border: .6px solid rgba(181,118,20,.6); border-radius: 1px; }
 .prof .bar i.f { background: rgba(181,118,20,.7); }
@@ -196,7 +197,7 @@ h1 { font-size: 34px; line-height: 1; letter-spacing: -.03em; color: var(--fg); 
     <ol class="other" id="other"></ol>
   </div>
 
-  <div class="folio"><span>Mark Akritas · resume</span><i>continued overleaf: the career as a score, and the stack as a sky →</i><span>1 / 2</span></div>
+  <div class="folio"><span>Mark Akritas · resume</span><i>continued overleaf: the career as a score, and the stack as a flow →</i><span>1 / 2</span></div>
 </section>
 
 <!-- ═══════════════════════════════ page 2 ═══════════════════════════════ -->
@@ -213,16 +214,13 @@ h1 { font-size: 34px; line-height: 1; letter-spacing: -.03em; color: var(--fg); 
 
   <div class="sec">
     <div class="sec-head"><span class="num">§2</span><h2>methods</h2><span class="rule"></span><span class="ref">fig. 3</span></div>
-    <div class="methods">
-      <figure class="plate atlas">
-        <svg id="atlas" viewBox="-200 -200 400 400" role="img" aria-label="Star atlas of the stack"></svg>
-        <p class="cap"><b>fig. 3</b> — the stack as a sky: angle = family, radius = first year in use, size = roles using it.</p>
-      </figure>
-      <div class="side">
-        <div><p class="sub">the stack, by constellation</p><div class="stack" id="stack"></div></div>
-        <div><p class="sub">programming · self-assessed</p><ul class="prof" id="prof"></ul></div>
+    <figure class="plate flowfig">
+      <div class="flowbox">
+        <svg id="stack-flow" role="img" aria-label="The stack as a flow: each thread is one tool used in one role, from roles through skill families to tools."></svg>
+        <div class="profbox"><p class="sub">programming · self-assessed</p><ul class="prof" id="prof"></ul></div>
       </div>
-    </div>
+      <p class="cap"><b>fig. 3</b> — the stack as a flow, after giorgia lupi: one thread = one tool in one role, so threads add up to every bar.</p>
+    </figure>
   </div>
 
   <div class="sec duo">
@@ -255,7 +253,7 @@ h1 { font-size: 34px; line-height: 1; letter-spacing: -.03em; color: var(--fg); 
 <script src="../assets/js/lib.js"></script>
 <script>
 CV.ready.then((C) => {
-  const { S, H, esc, rng, clamp, lorenz, simplify, ym, tenure, nowYears, noise1 } = L;
+  const { S, H, esc, rng, clamp, lorenz, simplify, ym, tenure, nowYears, noise1, flowLayout, flowPath } = L;
   const FAM = C.FAMILIES, KEYS = Object.keys(FAM), NOW = nowYears();
   const famVar = (f) => `var(--${FAM[f].color})`;
   const end = (r) => (r.end ? C.years(r.end) : NOW);
@@ -337,7 +335,7 @@ CV.ready.then((C) => {
   // fig. 2 — piano roll, static
   (() => {
     const svg = document.getElementById("score");
-    const W = 700, X0 = 262, X1 = 538, CHX = 556, CHS = 10, rowH = 10.9;
+    const W = 700, X0 = 262, X1 = 538, CHX = 556, CHS = 10, rowH = 10.6;
     const t0 = 2010.4, t1 = Math.max(NOW, 2026.5) + 0.5, X = (t) => X0 + ((t - t0) / (t1 - t0)) * (X1 - X0);
     let y = 22;
     const fs = { "font-size": 8.2 };
@@ -387,76 +385,39 @@ CV.ready.then((C) => {
     }
   })();
 
-  // fig. 3 — the atlas, static
+  // fig. 3 — the stack as a flow, from the same layout as the site's fig. 3c, at print scale
   (() => {
-    const svg = document.getElementById("atlas");
-    const R0 = 44, R1 = 160, Y0 = 2017, Y1 = 2027;
-    const rad = (t) => R0 + Math.pow((clamp(t, Y0, Y1) - Y0) / (Y1 - Y0), 0.75) * (R1 - R0);
-    const by = Object.fromEntries(KEYS.map((f) => [f, C.SKILLS.filter((s) => s.fam === f).sort((p, q) => p.firstLight - q.firstLight || p.name.localeCompare(q.name))]));
-    const wts = KEYS.map((f) => by[f].length + 1.4), tot = wts.reduce((a, b) => a + b, 0);
-    let acc = -Math.PI / 2 - (wts[0] / tot) * Math.PI;
-    const sec = {};
-    KEYS.forEach((f, i) => { const sp = (wts[i] / tot) * 2 * Math.PI; sec[f] = { a0: acc, a1: acc + sp, mid: acc + sp / 2 }; acc += sp; });
-    const r = rng(23), stars = [];
-    for (const f of KEYS) {
-      const list = by[f], { a0, a1 } = sec[f], u = (a1 - a0) / (list.length + 1.4);
-      list.forEach((s, i) => {
-        const ang = a0 + u * (1.2 + i) + (r() - 0.5) * u * 0.28;
-        const twin = i > 0 && Math.abs(s.firstLight - list[i - 1].firstLight) < 0.3;
-        const rr = rad(s.firstLight) + (twin ? (i % 2 ? 5.5 : -4.5) : 0) + (r() - 0.5) * 4;
-        stars.push({ s, f, ang, rr, x: Math.cos(ang) * rr, y: Math.sin(ang) * rr, size: 1.2 + 0.95 * Math.sqrt(s.magnitude) });
-      });
+    const svg = document.getElementById("stack-flow");
+    const W = 690, BW = 4, FW = 8, xR = 186, xF = 392, xT = 522, TOP = 12;
+    const Lf = flowLayout(C, { pitch: 2.5, roleMin: 11, roleGap: 3, famGap: 15, toolMin: 6.6, toolGap: 1, toolFamGap: 3.4, rolesTop: true });
+    svg.setAttribute("viewBox", `0 0 ${W} ${TOP + Lf.H + 2}`);
+    const fs = (n) => ({ "font-size": n });
+    label(svg, xR + BW, 7, "ROLES", { ...fs(5.6), fill: "#a89984", "letter-spacing": 1, "text-anchor": "end" });
+    label(svg, xF, 7, "FAMILIES", { ...fs(5.6), fill: "#a89984", "letter-spacing": 1, "text-anchor": "middle" });
+    label(svg, xT, 7, "TOOLS", { ...fs(5.6), fill: "#a89984", "letter-spacing": 1 });
+    const g = S("g", { transform: `translate(0 ${TOP})` }, svg);
+    for (const t of Lf.threads) S("path", { d: flowPath(t, xR + BW, xF - FW / 2, xF + FW / 2, xT), fill: "none", style: `stroke:${famVar(t.f)}`, "stroke-width": (Lf.pitch - 0.4).toFixed(2), opacity: 0.45 }, g);
+    for (const r of Lf.roles) {
+      const L = Lf.role.get(r.id);
+      S("rect", { x: xR, y: L.top, width: BW, height: L.h, rx: 1, style: `fill:var(--${C.GROUPS[r.group]})` }, g);
+      label(g, xR - 5, L.mid - 0.6, r.roleShort || r.role, { ...fs(6.8), fill: "#3c3836", "text-anchor": "end" });
+      label(g, xR - 5, L.mid + 6.2, `${r.short || r.where} · ${ym(r.start)}–${ym(r.end)}`, { ...fs(5.3), fill: "#a89984", "text-anchor": "end" });
     }
-    S("circle", { r: R0 - 3, fill: "#f2e5bc", opacity: 0.6 }, svg);
-    for (let yr = Y0; yr <= 2026; yr++) S("circle", { r: rad(yr).toFixed(1), fill: "none", stroke: "#d5c4a1", "stroke-width": 0.45, "stroke-dasharray": "0.8 2.2" }, svg);
-    S("circle", { r: rad(NOW).toFixed(1), fill: "none", stroke: "#af3a03", "stroke-width": 0.6, opacity: 0.6 }, svg);
-    for (const f of KEYS) { const a = sec[f].a0; S("path", { d: `M${Math.cos(a) * 16} ${Math.sin(a) * 16}L${Math.cos(a) * (R1 + 6)} ${Math.sin(a) * (R1 + 6)}`, stroke: "#d5c4a1", "stroke-width": 0.4, "stroke-dasharray": "0.8 3" }, svg); }
-    const RIM = R1 + 22;
-    S("circle", { r: RIM, fill: "none", stroke: "#a89984", "stroke-width": 0.5 }, svg);
-    S("circle", { r: RIM + 7, fill: "none", stroke: "#a89984", "stroke-width": 0.5 }, svg);
-    let ticks = "";
-    for (let dg = 0; dg < 360; dg += 5) { const a = (dg * Math.PI) / 180, l = dg % 30 ? 3 : 7; ticks += `M${(Math.cos(a) * RIM).toFixed(1)} ${(Math.sin(a) * RIM).toFixed(1)}L${(Math.cos(a) * (RIM + l)).toFixed(1)} ${(Math.sin(a) * (RIM + l)).toFixed(1)}`; }
-    S("path", { d: ticks, stroke: "#a89984", "stroke-width": 0.45 }, svg);
-    // family initials on the rim
-    for (const f of KEYS) {
-      const a = sec[f].mid, rr = R1 + 13;
-      label(svg, Math.cos(a) * rr, Math.sin(a) * rr + 2.4, FAM[f].latin.split(" ")[0], { "font-size": 6.6, "font-style": "italic", fill: "#7c6f64", "text-anchor": "middle" });
+    for (const f of Lf.fams) {
+      const L = Lf.fam.get(f);
+      S("rect", { x: xF - FW / 2, y: L.top, width: FW, height: L.h, rx: 1.5, style: `fill:${famVar(f)}` }, g);
+      const t = label(g, xF, L.top - 3.5, "", { "text-anchor": "middle", ...fs(6.6), style: "paint-order:stroke;stroke:#f6ebc0;stroke-width:2.4px;stroke-linejoin:round" });
+      t.innerHTML = `<tspan font-style="italic" fill="#3c3836">${esc(FAM[f].latin)}</tspan><tspan fill="#a89984" font-size="5.4"> · ${esc(FAM[f].label)}</tspan>`;
     }
-    for (const f of KEYS) {
-      const list = stars.filter((st) => st.f === f);
-      for (let i = 1; i < list.length; i++) S("path", { d: `M${list[i - 1].x.toFixed(1)} ${list[i - 1].y.toFixed(1)}L${list[i].x.toFixed(1)} ${list[i].y.toFixed(1)}`, style: `stroke:${famVar(f)}`, "stroke-width": 0.5, "stroke-dasharray": "1.6 1.6", opacity: 0.7 }, svg);
-    }
-    for (const st of stars) {
-      const g = S("g", { transform: `translate(${st.x.toFixed(1)} ${st.y.toFixed(1)})` }, svg), col = famVar(st.f);
-      S("circle", { r: st.size * 2.5, style: `fill:${col}`, opacity: 0.16 }, g);
-      if (st.s.magnitude >= 4) { const l = st.size * 3.2; S("path", { d: `M${-l} 0H${l}M0 ${-l}V${l}`, style: `stroke:${col}`, "stroke-width": 0.45, opacity: 0.7 }, g); }
-      S("circle", { r: st.size, style: `fill:${col}` }, g);
-    }
-    // names, placed greedily like the site's atlas
-    const CW = 3.6, LH = 6.4, placed = [];
-    const hit = (b) => placed.some((p) => !(b[2] < p[0] || b[0] > p[2] || b[3] < p[1] || b[1] > p[3]));
-    const onStar = (b, me) => stars.some((o) => o !== me && (clamp(o.x, b[0], b[2]) - o.x) ** 2 + (clamp(o.y, b[1], b[3]) - o.y) ** 2 < (o.size + 0.8) ** 2);
-    for (const st of stars.slice().sort((a, b) => b.s.magnitude - a.s.magnitude || a.rr - b.rr)) {
-      const A = Math.atan2(st.y, st.x), w = st.s.abbr.length * CW + 1, dd = st.size + 2.4;
-      for (const da of [0, 0.55, -0.55, 1.15, -1.15, 1.75, -1.75, Math.PI]) {
-        const a = A + da, cx = Math.cos(a), cy = Math.sin(a), ax = st.x + cx * dd, ay = st.y + cy * dd;
-        const x0 = cx > 0.35 ? ax : cx < -0.35 ? ax - w : ax - w / 2, y0 = cy > 0.35 ? ay : cy < -0.35 ? ay - LH : ay - LH / 2;
-        const b = [x0, y0, x0 + w, y0 + LH];
-        if (!hit(b) && !onStar(b, st) && [[b[0], b[1]], [b[2], b[3]], [b[0], b[3]], [b[2], b[1]]].every(([x, y]) => x * x + y * y < (R1 + 4) ** 2)) {
-          placed.push(b); label(svg, b[0] + 0.5, b[1] + LH * 0.8, st.s.abbr, { "font-size": 6, fill: "#504945" }); break;
-        }
-      }
-    }
-    label(svg, 0, -2, "before data", { "font-size": 6.4, "font-style": "italic", fill: "#7c6f64", "text-anchor": "middle" });
-    label(svg, 0, 6.5, "2010 — 2017", { "font-size": 5.4, fill: "#a89984", "text-anchor": "middle" });
-    for (const yr of [2018, 2020, 2022, 2024, 2026]) {
-      const a = sec[KEYS[0]].a0;
-      label(svg, Math.cos(a) * rad(yr), Math.sin(a) * rad(yr) + 1.8, String(yr), { "font-size": 5, fill: "#a89984", "text-anchor": "middle", style: "paint-order:stroke;stroke:#fbf1c7;stroke-width:2px" });
+    for (const tl of Lf.tools) {
+      const L = Lf.tool.get(tl.id);
+      S("rect", { x: xT, y: L.top, width: BW, height: L.h, rx: 1, style: `fill:${famVar(tl.fam)}` }, g);
+      const t = label(g, xT + BW + 5, L.mid + 2.2, "", { ...fs(6.2), fill: "#504945" });
+      t.innerHTML = `${esc(tl.name)}<tspan fill="#a89984" font-size="5.2"> ${tl.magnitude}</tspan>`;
     }
     const LV = { basic: 1, intermediate: 2, good: 3, excellent: 4 };
     document.getElementById("prof").innerHTML = C.SKILLS.filter((s) => s.level).map((s) =>
-      `<li><span>${esc(s.name)}</span><span class="lv">${s.level}</span><span class="bar">${[1, 2, 3, 4].map((i) => `<i class="${i <= LV[s.level] ? "f" : ""}"></i>`).join("")}</span></li>`).join("");
-    document.getElementById("stack").innerHTML = KEYS.map((f) => `<p><svg width="7" height="7" style="margin-right:4px"><circle cx="3.5" cy="3.5" r="3" style="fill:${famVar(f)}"/></svg><i>${esc(FAM[f].latin)}</i> <span class="fam">· ${esc(FAM[f].label)}</span><br>${by[f].map((s) => esc(s.name)).join(", ")}</p>`).join("");
+      `<li><span>${esc(s.name.split(" · ")[0])}</span><span class="lv">${s.level}</span><span class="bar">${[1, 2, 3, 4].map((i) => `<i class="${i <= LV[s.level] ? "f" : ""}"></i>`).join("")}</span></li>`).join("");
   })();
 
   // fig. 5 — languages as signals

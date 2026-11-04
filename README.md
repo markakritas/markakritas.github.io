@@ -2,7 +2,7 @@
 
 ![og.jpg](./assets/img/og.jpg)
 
-Mark Akritas's resume, typeset like a preprint and drawn with live figures: a Lorenz attractor you can rotate, a career scored as a piano roll, the stack charted as a star atlas, languages recorded as signals, and Ararat redrawn by Fourier circles. It uses the gruvbox palettes and Maple Mono of the [profile README](https://github.com/markakritas/markakritas). Light by default; `:set bg=dark` in the top bar (or `t`) switches. No frameworks and no build step.
+Mark Akritas's resume, typeset like a preprint and drawn with live figures: a Lorenz attractor you can rotate, a career scored as a piano roll, the stack as a star atlas, a periodic table or a flow (pick with the dial), languages recorded as signals, and Ararat redrawn by Fourier circles. It uses the gruvbox palettes and Maple Mono of the [profile README](https://github.com/markakritas/markakritas). Light by default; `:set bg=dark` in the top bar (or `t`) switches. No frameworks and no build step.
 
 ```text
 index.html            the page: structure and prose
@@ -13,7 +13,7 @@ data/
 assets/
   css/style.css       the paper, the plates, the layout, both themes
   js/cv.js            loads data/*.json, checks it, derives what the figures need
-  js/lib.js           shared helpers: palette, render loop, lorenz / dft / marching-squares maths
+  js/lib.js           shared helpers: palette, render loop, lorenz / dft / marching-squares maths, the flow layout
   js/site.js          every interactive figure on index.html
   fonts/              Maple Mono, JetBrains Mono (maths), UnifrakturMaguntia, Noto Serif Armenian; subset, SIL OFL
   img/                favicon, social preview
@@ -41,6 +41,7 @@ Everything the figures draw comes from `data/cv.json`; the piano roll, the star 
 - `skills` are ids from the `skills` list. They draw the role's chord in fig. 2 and set each star's brightness in fig. 3; a skill's first light is the start of the earliest role that lists it.
 - A new skill is one line in `skills`: `{ "id": "jax", "name": "JAX", "family": "model" }`, optionally with `abbr` (its label on the atlas), `level` (basic · intermediate · good · excellent, shown under programming) or `since` (a first-light year, for tools younger than the roles that used them).
 - `groups` and `families` map names to gruvbox colour tokens and set their order.
+- `periodic` places every skill on the periodic-table view (`row`, `col`, `sym`); its `radioactive` series holds the soft skills, which appear on the table only.
 
 Typos are reported in the browser console as `[data] …` warnings, such as a role listing a skill id that doesn't exist. The JSON is fetched, so preview through a server (`python3 -m http.server`), not by opening the file directly. Prose such as the abstract and the captions lives in `index.html` and `resume/print.html`, and the education cards with their sketches are in `index.html`.
 

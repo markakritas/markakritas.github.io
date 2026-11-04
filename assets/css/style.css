@@ -105,7 +105,7 @@ i, em { font-style: italic; }
   transition: width .42s cubic-bezier(.7, 0, .2, 1), opacity .3s ease, transform .5s cubic-bezier(.2, 1.25, .35, 1);
   transition-delay: calc(var(--i) * 34ms + 20ms);
 }
-.mono-mark:hover .mm-x i, .mono-mark:focus-visible .mm-x i { width: calc(1ch + .02em); opacity: 1; transform: none; }
+.mono-mark:hover .mm-x i, .mono-mark:focus-visible .mm-x i, .mm-open .mono-mark .mm-x i { width: calc(1ch + .02em); opacity: 1; transform: none; }
 .toc { display: flex; gap: 18px; margin-inline: auto; }
 .toc a { text-decoration: none; color: var(--muted); white-space: nowrap; }
 .toc a b { font-weight: 400; color: var(--faint); margin-right: 2px; }
@@ -377,6 +377,66 @@ input[type="range"]:focus-visible { outline-offset: 2px; }
 #atlas .twinkle { animation: twinkle var(--tw, 3.4s) ease-in-out infinite; animation-delay: var(--td, 0s); transform-box: fill-box; transform-origin: center; }
 @keyframes twinkle { 0%, 100% { transform: scale(1); } 50% { transform: scale(.62); } }
 .atlas-side { display: grid; gap: 18px; align-content: center; }
+
+/* the view dial: a three-detent rotary selector, like the range switch on an old instrument */
+.view-bar { display: flex; align-items: flex-end; justify-content: flex-end; gap: 14px; padding: 16px 26px 0; margin-bottom: -6px; }
+.view-lbl { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--faint); padding-bottom: 14px; }
+.dial { position: relative; width: 210px; height: 84px; flex: none; }
+.dial button {
+  position: absolute; left: 50%; top: 58px; transform: translate(-50%, -50%) rotate(var(--a)) translateY(-46px) rotate(calc(-1 * var(--a)));
+  border: 0; background: none; padding: 2px 4px; cursor: pointer; font-size: 11.5px; color: var(--muted); border-radius: 4px; transition: color .25s;
+}
+.dial button:hover { color: var(--fg); }
+.dial button[aria-selected="true"] { color: var(--red); }
+.dial .ticks i { position: absolute; left: 50%; top: 58px; width: 1px; height: 5px; margin-left: -.5px; background: var(--faint); transform-origin: 50% 0; transform: rotate(var(--a)) translateY(-29px) rotate(180deg); }
+.dial .knob {
+  position: absolute; left: 50%; top: 58px; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; cursor: pointer;
+  background:
+    radial-gradient(circle at 50% 50%, var(--bg-soft) 0 52%, transparent 53%),
+    repeating-conic-gradient(from 0deg, color-mix(in srgb, var(--fg) 28%, transparent) 0 3deg, transparent 3deg 9deg),
+    var(--bg);
+  box-shadow: 0 0 0 1px var(--line2), 0 3px 8px -3px var(--shadow);
+  transform: rotate(var(--turn, -52deg)); transition: transform .6s cubic-bezier(.3, 1.7, .45, 1);
+}
+.dial .knob i { position: absolute; left: 50%; top: 5px; width: 2px; height: 12px; margin-left: -1px; border-radius: 1px; background: var(--red); }
+.dial .knob::after { content: ""; position: absolute; inset: 15px; border-radius: 50%; background: var(--line2); }
+.dial .knob:hover { box-shadow: 0 0 0 1px var(--faint), 0 3px 8px -3px var(--shadow); }
+.view { animation: view-in .5s cubic-bezier(.2, .8, .2, 1); }
+@keyframes view-in { from { opacity: 0; transform: translateY(8px); filter: blur(3px); } }
+#fig3 figcaption span[hidden] { display: none; }
+
+/* fig. 3b — periodic table */
+#ptable { display: block; width: 100%; min-width: 760px; height: auto; font-family: var(--mono); margin-top: 6px; }
+#ptable .tile { cursor: default; transition: opacity .25s; }
+#ptable .tile rect { transition: fill-opacity .2s, transform .2s; }
+#ptable .tile:hover rect, #ptable .tile.hi rect { fill-opacity: .24; }
+#ptable.dim .tile:not(.hi) { opacity: .3; }
+#ptable text { fill: var(--fg2); }
+#ptable .num, #ptable .mass { font-size: 8.5px; fill: var(--muted); }
+#ptable .mass { fill: var(--faint); }
+#ptable .sym { font-size: 22px; font-weight: 700; }
+#ptable .nm { font-size: 9px; }
+#ptable .ttl { font-size: 15px; font-weight: 700; fill: var(--fg); }
+#ptable .note, #ptable .key { font-size: 10.5px; fill: var(--muted); }
+#ptable .key { fill: var(--fg2); cursor: default; }
+#ptable .fb { font-size: 10px; font-style: italic; fill: var(--faint); }
+#ptable .rad .glow { animation: decay 3.6s ease-in-out infinite; animation-delay: var(--d, 0s); }
+@keyframes decay { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+
+/* fig. 3c — the stack as a flow */
+#flow { display: block; width: 100%; min-width: 820px; height: auto; font-family: var(--mono); margin-top: 4px; }
+#flow .thread { fill: none; stroke-width: var(--strand, 4.3px); stroke-linecap: butt; opacity: .42; transition: opacity .25s; }
+#flow.dim .thread { opacity: .06; }
+#flow.dim .thread.hi { opacity: .85; }
+#flow .node { cursor: pointer; }
+#flow .node text { font-size: 11px; fill: var(--fg2); transition: fill .2s, opacity .2s; paint-order: stroke; stroke: var(--bg); stroke-width: 3px; stroke-linejoin: round; }
+#flow .node .sub { font-size: 9.5px; fill: var(--faint); text-transform: none; letter-spacing: 0; }
+#flow .node .lat { font-style: italic; font-size: 11.5px; fill: var(--fg); }
+#flow.dim .node:not(.hi) text { opacity: .35; }
+#flow .node .hit { fill: transparent; }
+#flow .annot { font-size: 10.5px; font-style: italic; fill: var(--muted); }
+#flow .lead { fill: none; stroke: var(--faint); stroke-width: .7; }
+#flow .colhead { font-size: 9.5px; letter-spacing: .16em; fill: var(--faint); }
 .atlas-side .howto { flex-direction: column; gap: 10px; padding: 0; }
 .scrub { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
 .scrub input { flex: 1; width: auto; }
@@ -540,6 +600,8 @@ a.card:hover { color: var(--fg2); transform: translateY(-3px); box-shadow: 0 14p
   .pend { max-width: 520px; }
 }
 @media (max-width: 680px) {
+  .view-bar { justify-content: center; padding-inline: 12px; }
+  .view-lbl { display: none; }
   .bg-sketch.galton, .bg-sketch.bif { opacity: .75; }
   body { font-size: 14px; }
   .bar { gap: 10px; }

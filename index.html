@@ -30,9 +30,11 @@
     if (a) document.documentElement.dataset.accent = a;
   } catch (e) {}
   // the name is typed in by site.js; hide it until then (and give up after 3 s if scripts never run)
+  // and the monogram starts unfolded, ΜΑΡΚ·ΑΚΡΙΤΑΣ, folding back to Μ·Α once the name is written
   if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    document.documentElement.classList.add("pre-type");
+    document.documentElement.classList.add("pre-type", "mm-open");
     setTimeout(function () { document.documentElement.classList.remove("pre-type"); }, 3000);
+    window.__mmFallback = setTimeout(function () { document.documentElement.classList.remove("mm-open"); }, 4500);
   }
 </script>
 <link rel="stylesheet" href="assets/css/style.css">
@@ -165,7 +167,9 @@
 <section class="sec" id="methods">
   <div class="sec-head"><span class="num">§2</span><h2>methods</h2><span class="rule"></span><span class="ref">fig. 3</span></div>
   <div class="main prose">
-    <p>The stack, charted as a sky. Each family of tools is a constellation and each ring is a year. A star rises the first year a role of mine used it and burns brighter the more roles used it, and the lines join each constellation in the order its stars appeared. Press play to watch the sky fill in.</p>
+    <p data-for="atlas">The stack, charted as a sky. Each family of tools is a constellation and each ring is a year. A star rises the first year a role of mine used it and burns brighter the more roles used it, and the lines join each constellation in the order its stars appeared. Press play to watch the sky fill in.</p>
+    <p data-for="table" hidden>The same stack, set as a periodic table, the way it hangs on my github profile. Elements sit in their families; the column on the far right holds the noble gases, the inert ones that quietly run everything else. The two detached rows underneath are the tooling and the methods, and below them the radioactive series: the soft skills, unstable and best handled with care.</p>
+    <p data-for="flow" hidden>And as a flow. Every thread is one tool used in one role: threads leave the roles on the left, gather by family in the middle and end at the tools on the right, so the thicker a tool, the more of my work has run through it.</p>
   </div>
   <aside class="margin">
     <div class="proficiency">
@@ -175,21 +179,45 @@
   </aside>
 
   <figure class="wide plate fig-atlas" id="fig3">
-    <div class="atlas-wrap">
-      <div class="atlas-stage" id="atlas-stage">
-        <canvas id="atlas-sky" aria-hidden="true"></canvas>
-        <svg id="atlas" role="img" aria-label="Star atlas of the stack: thirty-four tools arranged as seven constellations."></svg>
+    <div class="view-bar">
+      <span class="view-lbl">view</span>
+      <div class="dial" id="dial" role="tablist" aria-label="view of the stack">
+        <button role="tab" id="tab-atlas" aria-controls="view-atlas" aria-selected="true" data-view="atlas" style="--a:-52deg">atlas</button>
+        <button role="tab" id="tab-table" aria-controls="view-table" aria-selected="false" data-view="table" style="--a:0deg" tabindex="-1">table</button>
+        <button role="tab" id="tab-flow" aria-controls="view-flow" aria-selected="false" data-view="flow" style="--a:52deg" tabindex="-1">flow</button>
+        <span class="ticks" aria-hidden="true"><i style="--a:-52deg"></i><i style="--a:0deg"></i><i style="--a:52deg"></i></span>
+        <span class="knob" id="knob" aria-hidden="true"><i></i></span>
       </div>
-      <div class="atlas-side">
-        <div class="howto" id="atlas-key"></div>
-        <div class="scrub">
-          <button class="pill play" id="atlas-play" aria-label="play the sky from 2017 to now">▶</button>
-          <input type="range" id="atlas-year" min="2017" max="2026.9" step="0.01" value="2026.9" aria-label="year">
-          <output id="atlas-year-out">now</output>
+    </div>
+
+    <div class="view" id="view-atlas" role="tabpanel" aria-labelledby="tab-atlas">
+      <div class="atlas-wrap">
+        <div class="atlas-stage" id="atlas-stage">
+          <canvas id="atlas-sky" aria-hidden="true"></canvas>
+          <svg id="atlas" role="img" aria-label="Star atlas of the stack: thirty-four tools arranged as seven constellations."></svg>
+        </div>
+        <div class="atlas-side">
+          <div class="howto" id="atlas-key"></div>
+          <div class="scrub">
+            <button class="pill play" id="atlas-play" aria-label="play the sky from 2017 to now">▶</button>
+            <input type="range" id="atlas-year" min="2017" max="2026.9" step="0.01" value="2026.9" aria-label="year">
+            <output id="atlas-year-out">now</output>
+          </div>
         </div>
       </div>
     </div>
-    <figcaption><b>fig. 3</b> — atlas coelestis of the stack. angle = family, radius = first year in use (as of the earliest role that used it), size = how many roles used it. drag to turn the sky; hover a star.</figcaption>
+    <div class="view" id="view-table" role="tabpanel" aria-labelledby="tab-table" hidden>
+      <div class="scroll-x"><svg id="ptable" role="img" aria-label="Periodic table of the stack: thirty-four tools and methods set out as elements, grouped by family."></svg></div>
+    </div>
+    <div class="view" id="view-flow" role="tabpanel" aria-labelledby="tab-flow" hidden>
+      <div class="scroll-x"><svg id="flow" role="img" aria-label="Flow of the stack: each thread is one tool used in one role, running from roles through skill families to tools."></svg></div>
+    </div>
+
+    <figcaption>
+      <span data-for="atlas"><b>fig. 3a</b> — atlas coelestis of the stack. angle = family, radius = first year in use (as of the earliest role that used it), size = how many roles used it. drag to turn the sky; hover a star.</span>
+      <span data-for="table" hidden><b>fig. 3b</b> — periodic table of the stack. the number is the element's place, the small figure top right its atomic mass: how many roles used it. the soft skills are radioactive, so their masses come in brackets. hover an element to light up its family.</span>
+      <span data-for="flow" hidden><b>fig. 3c</b> — the stack as a flow, after giorgia lupi's nobel laureates. one thread = one tool in one role, so the threads add up to every bar; roles newest first. hover a role, a family or a tool to follow its threads.</span>
+    </figcaption>
   </figure>
   <details class="wide plain">
     <summary>plain-text version</summary>

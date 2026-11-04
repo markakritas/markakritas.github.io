@@ -38,11 +38,13 @@ window.CV = (() => {
       const first = s.roles.length ? Math.min(...s.roles.map((r) => years(r.start))) : (s.since ?? nowY);
       s.firstLight = Math.max(s.since ?? -Infinity, first);
     }
+    const PERIODIC = cv.periodic || { elements: [] };
+    PERIODIC.elements = PERIODIC.elements.filter((e) => skillIndex[e.skill] || warn(`periodic table lists unknown skill "${e.skill}"`));
     const ids = new Set(ex.thinkers.map((t) => t.id));
     for (const [a, b] of ex.influences) for (const x of [a, b]) if (!ids.has(x)) warn(`influence mentions unknown thinker "${x}"`);
     return {
       NAME: cv.name, FAMILIES, GROUPS, SKILLS, skillIndex, CAREER, POOLED: cv.pooled,
-      LANGUAGES: cv.languages, INTERESTS: cv.interests, PROJECTS: cv.projects,
+      LANGUAGES: cv.languages, INTERESTS: cv.interests, PROJECTS: cv.projects, PERIODIC,
       THINKERS: ex.thinkers, INFLUENCES: ex.influences, QUOTES: ex.quotes, EQUATIONS: ex.equations,
       years, ofTheDay,
     };

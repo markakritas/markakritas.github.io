@@ -6,7 +6,10 @@
     "  skills: ids from the skills list; they drive the chords in fig. 2 and the star magnitudes in fig. 3.",
     "skills: family is a key of families; level (basic | intermediate | good | excellent) shows under 'programming';",
     "  since overrides the first-light year for tools younger than the roles that used them.",
-    "groups: role group -> colour token, in display order. families: skill family -> label, constellation name, colour."
+    "groups: role group -> colour token, in display order. families: skill family -> label, constellation name, colour.",
+    "periodic: the periodic-table view. each element is a skill on the table's grid (rows 1-3 the main block, 4-5 the",
+    "  detached f-block); name overrides the label on the tile, and legend renames a family, on the table only.",
+    "  radioactive: the bottom series, on the table only. col places it; mass is shown in brackets; note is its hover card."
   ],
   "name": "Mark Akritas",
   "families": {
@@ -15,7 +18,7 @@
     "llm": { "label": "llm stack", "latin": "Machina Loquens", "color": "purple" },
     "voice": { "label": "voice ai", "latin": "Vox", "color": "aqua" },
     "ship": { "label": "shipping", "latin": "Navis", "color": "blue" },
-    "noble": { "label": "noble gases", "latin": "Gases Nobiles", "color": "green" },
+    "infra": { "label": "infrastructure", "latin": "Fundamenta", "color": "green" },
     "tool": { "label": "tooling", "latin": "Instrumenta", "color": "muted" }
   },
   "groups": { "industry": "orange", "research & teaching": "blue", "education": "aqua", "before data": "faint" },
@@ -46,9 +49,9 @@
     { "id": "rest", "name": "REST APIs", "family": "ship", "abbr": "REST" },
     { "id": "dash", "name": "dashboards", "family": "ship" },
     { "id": "dataeng", "name": "data engineering", "family": "ship", "abbr": "data eng." },
-    { "id": "linux", "name": "Linux", "family": "noble" },
-    { "id": "docker", "name": "Docker", "family": "noble" },
-    { "id": "git", "name": "Git", "family": "noble" },
+    { "id": "linux", "name": "Linux", "family": "infra" },
+    { "id": "docker", "name": "Docker", "family": "infra" },
+    { "id": "git", "name": "Git", "family": "infra" },
     { "id": "uv", "name": "uv", "family": "tool", "since": 2024.1 },
     { "id": "ruff", "name": "ruff", "family": "tool", "since": 2023 },
     { "id": "pydantic", "name": "Pydantic", "family": "tool" },
@@ -254,5 +257,58 @@
       "about": "intelligent navigation between symbols in your code files.",
       "href": "https://marketplace.visualstudio.com/items?itemName=markakritas.jumpwise"
     }
+  },
+  "periodic": {
+    "title": "periodic table of the stack",
+    "note": "group = family · noble gases are inert and run everything",
+    "legend": { "infra": "noble gases" },
+    "radioactive": {
+      "label": "soft skills",
+      "elements": [
+        { "col": 4, "sym": "Sa", "name": "Sarcasm", "mass": "∞", "note": "naturally occurring. half-life: indefinite. decays into irony." },
+        { "col": 5, "sym": "Lc", "name": "Laconism", "mass": "1", "note": "half-life: one word." },
+        { "col": 6, "sym": "Pf", "name": "Perfectionism", "mass": "99.9", "note": "never quite stable. decays into one more pass." },
+        { "col": 7, "sym": "Pe", "name": "Pedantry", "mass": "0.0", "note": "technically, it decays into footnotes." },
+        { "col": 8, "sym": "Ot", "name": "Overthinking", "mass": "3", "note": "peak activity around 3 a.m." },
+        { "col": 9, "sym": "Yk", "name": "Yak shaving", "mass": "n+1", "note": "a chain reaction: fix the editor to fix the linter to fix the build." },
+        { "col": 10, "sym": "St", "name": "Stoicism", "mass": "0", "note": "inert under load. half-life: unbothered." }
+      ]
+    },
+    "elements": [
+      { "row": 1, "col": 1, "sym": "Py", "skill": "python" },
+      { "row": 1, "col": 12, "sym": "Lx", "skill": "linux" },
+      { "row": 2, "col": 1, "sym": "R", "skill": "r" },
+      { "row": 2, "col": 2, "sym": "Sq", "skill": "sql" },
+      { "row": 2, "col": 7, "sym": "vL", "skill": "vllm" },
+      { "row": 2, "col": 8, "sym": "Rg", "skill": "rag" },
+      { "row": 2, "col": 9, "sym": "Wv", "skill": "weaviate" },
+      { "row": 2, "col": 10, "sym": "Kz", "skill": "kreuzberg" },
+      { "row": 2, "col": 11, "sym": "Sx", "skill": "searxng" },
+      { "row": 2, "col": 12, "sym": "Dk", "skill": "docker" },
+      { "row": 3, "col": 1, "sym": "Js", "skill": "js", "name": "JavaScript" },
+      { "row": 3, "col": 2, "sym": "Sh", "skill": "shell" },
+      { "row": 3, "col": 3, "sym": "Pt", "skill": "pytorch" },
+      { "row": 3, "col": 4, "sym": "Sk", "skill": "sklearn", "name": "scikit-learn" },
+      { "row": 3, "col": 5, "sym": "Lr", "skill": "lora", "name": "LoRA" },
+      { "row": 3, "col": 6, "sym": "Mx", "skill": "mixed", "name": "mixed models" },
+      { "row": 3, "col": 7, "sym": "Lk", "skill": "livekit" },
+      { "row": 3, "col": 8, "sym": "El", "skill": "elevenlabs" },
+      { "row": 3, "col": 9, "sym": "Dg", "skill": "deepgram" },
+      { "row": 3, "col": 10, "sym": "Ap", "skill": "rest", "name": "REST APIs" },
+      { "row": 3, "col": 11, "sym": "Db", "skill": "dash", "name": "Dashboards" },
+      { "row": 3, "col": 12, "sym": "Gt", "skill": "git" },
+      { "row": 4, "col": 4, "sym": "Uv", "skill": "uv" },
+      { "row": 4, "col": 5, "sym": "Rf", "skill": "ruff" },
+      { "row": 4, "col": 6, "sym": "Pd", "skill": "pydantic" },
+      { "row": 4, "col": 7, "sym": "Jp", "skill": "jupyter" },
+      { "row": 4, "col": 8, "sym": "Vs", "skill": "vscode" },
+      { "row": 5, "col": 4, "sym": "Ml", "skill": "ml", "name": "machine learning" },
+      { "row": 5, "col": 5, "sym": "Ex", "skill": "doe", "name": "experiments" },
+      { "row": 5, "col": 6, "sym": "Sp", "skill": "signal", "name": "signals" },
+      { "row": 5, "col": 7, "sym": "Nl", "skill": "nlp" },
+      { "row": 5, "col": 8, "sym": "Lm", "skill": "llm" },
+      { "row": 5, "col": 9, "sym": "Ag", "skill": "agents" },
+      { "row": 5, "col": 10, "sym": "Dt", "skill": "dataeng", "name": "data eng." }
+    ]
   }
 }

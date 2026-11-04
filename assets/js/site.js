@@ -3,7 +3,7 @@
   "use strict";
   const {
     root, still, $, $$, S, H, esc, palette, rgba, mix, flow, onTheme, fit, loop, onceVisible, onResize,
-    rng, clamp, lerp, ease, noise1, lorenz, lorenzStep, spline, resample, dft, contours, braille, sci, ym, tenure, nowYears,
+    rng, clamp, lerp, ease, noise1, lorenz, lorenzStep, spline, resample, dft, contours, braille, flowLayout, flowPath, sci, ym, tenure, nowYears,
   } = L;
   let C, FAM, FAM_KEYS; // filled in once data/*.json has loaded (see the bottom of this file)
   const NOW = nowYears();
@@ -109,7 +109,8 @@
   // ── the title types itself in ─────────────────────────────────────────
   function initType() {
     const nm = $("h1 .nm"), cur = $("h1 .cursor");
-    if (still || !root.classList.contains("pre-type")) return;
+    clearTimeout(window.__mmFallback);
+    if (still || !root.classList.contains("pre-type")) { root.classList.remove("mm-open"); return; }
     const full = nm.textContent;
     nm.textContent = "";
     root.classList.remove("pre-type");
@@ -118,7 +119,10 @@
     const next = () => {
       nm.textContent = full.slice(0, ++i);
       if (i < full.length) setTimeout(next, 60 + Math.random() * 80 + (full[i] === " " ? 150 : 0));
-      else setTimeout(() => cur.classList.remove("typing"), 600);
+      else {
+        setTimeout(() => cur.classList.remove("typing"), 600);
+        setTimeout(() => root.classList.remove("mm-open"), 700); // the monogram folds back once the name is written
+      }
     };
     setTimeout(next, 420);
   }
@@ -469,8 +473,8 @@
   // when the tallest slot is full the floor opens and it starts over (about a minute and a half)
   function initGalton() {
     const cv = $("#galton");
-    const ROWS = 14, HOP = 0.1, EVERY = 0.1, CAP = 18, START = 0.4; // CAP: balls at the top of the bell when full
-    const BOUNCE = 0.5; // the last bounce scatters by N(0, (0.5 peg)²)
+    const ROWS = 14, HOP = 0.1, EVERY = 0.09, CAP = 22, START = 0.4; // CAP: balls at the top of the bell when full
+    const BOUNCE = 0.6; // the last bounce scatters by N(0, (0.6 peg)²), enough to smooth the binomial's steps away
     const rand = rng(17);
     const choose = (n, k) => { let c = 1; for (let i = 1; i <= k; i++) c = (c * (n - i + 1)) / i; return c; };
     const binom = Array.from({ length: ROWS + 1 }, (_, k) => choose(ROWS, k) / 2 ** ROWS);
@@ -494,7 +498,7 @@
       ({ ctx, w: W, h: Hh } = fit(cv));
       const dpr = cv.width / W;
       for (const c of [stat, pile]) { c.width = cv.width; c.height = cv.height; c.getContext("2d").setTransform(dpr, 0, 0, dpr, 0, 0); }
-      const dx = clamp(W * 0.06, 22, 72), r = clamp(W / 420, 1.8, 2.9), colW = 2 * r + 1.2;
+      const dx = clamp(W * 0.053, 20, 64), r = clamp(W / 420, 1.8, 2.9), colW = 2 * r + 1.2;
       const top = 26, pegTop = top + 24, floor = Hh - 26, binTop = floor - (CAP + 1) * 2 * r;
       const dy = clamp((binTop - pegTop - 6) / (ROWS - 0.5), 10, 34);
       const n = Math.floor((W - 8) / colW);
@@ -540,15 +544,20 @@
       c.strokeStyle = rgba(P.faint, 0.55); c.lineWidth = 0.8;
       c.beginPath(); c.moveTo(4, g.floor + 0.5); c.lineTo(W - 4, g.floor + 0.5); c.stroke();
       // the bell the slots fill to: the expected pile when the tallest slot holds CAP balls
-      c.strokeStyle = rgba(P.red, P.dark ? 0.5 : 0.38); c.lineWidth = 1.2; c.lineJoin = "round";
+      // sampled every 2 px from the density itself, not slot by slot, so it is a smooth curve
+      const sdB = BOUNCE * g.dx;
+      const dens = (x) => binom.reduce((q, w, k) => q + w * Math.exp(-0.5 * ((x - g.cx - (k - ROWS / 2) * g.dx) / sdB) ** 2), 0);
+      const top = dens(g.cx);
+      c.strokeStyle = rgba(P.red, P.dark ? 0.5 : 0.38); c.lineWidth = 1.2; c.lineJoin = "round"; c.lineCap = "round";
       c.beginPath();
       let on = false;
-      expect.forEach((e, i) => {
-        const hgt = (e / g.peak) * CAP * 2 * g.r;
-        if (hgt < 0.4) { on = false; return; }
-        on ? c.lineTo(colX(i), g.floor - hgt) : c.moveTo(colX(i), g.floor - hgt);
+      for (let x = 4; x <= W - 4; x += 2) {
+        const hgt = (dens(x) / top) * CAP * 2 * g.r;
+        if (hgt < 0.35) { if (on) c.lineTo(x, g.floor); on = false; continue; }
+        on ? c.lineTo(x, g.floor - hgt) : c.moveTo(x - 2, g.floor);
+        if (!on) c.lineTo(x, g.floor - hgt);
         on = true;
-      });
+      }
       c.stroke();
       c.font = `italic 10px ${FONT}`; c.fillStyle = rgba(P.faint, 0.95); c.textAlign = "center";
       const sd = g.dx * Math.sqrt(ROWS / 4 + BOUNCE * BOUNCE);
@@ -773,7 +782,7 @@
       label(svg, (X0 + X1) / 2, 40, "tenure", { class: "t-faint", "letter-spacing": 1.2, "text-anchor": "middle" });
       FAM_KEYS.forEach((f, i) => {
         const x = CHX + i * CHS;
-        label(svg, x + 2, 42, f === "noble" ? "infra" : f, { class: "t-faint", transform: `rotate(-58 ${x + 2} 42)`, "font-size": 9, style: `fill:${famVar(f)}` });
+        label(svg, x + 2, 42, f, { class: "t-faint", transform: `rotate(-58 ${x + 2} 42)`, "font-size": 9, style: `fill:${famVar(f)}` });
       });
       S("path", { d: `M16 50H${W - 16}`, class: "staff", "stroke-width": 1 }, svg);
 
@@ -1281,6 +1290,230 @@
     ul.after(H("p", { class: "note", style: { marginTop: "12px" }, text: "self-assessed. the full stack is charted in fig. 3." }));
     $("#skills-plain").append(...FAM_KEYS.map((f) => H("p", {}, H("b", { text: `${FAM[f].latin} · ${FAM[f].label}` }),
       C.SKILLS.filter((s) => s.fam === f).map((s) => s.name).join(", "))));
+  }
+
+
+  // ═════════════════════════════════════════════════════════════════════
+  // fig. 3 — three views of the stack, chosen with a dial
+  // ═════════════════════════════════════════════════════════════════════
+  function skillTip(sk) {
+    const first = sk.roles.slice().sort((p, q) => C.years(p.start) - C.years(q.start))[0];
+    const fl = !first ? "" : sk.since && sk.since >= C.years(first.start) ? `${Math.floor(sk.since)} <span class="faint">(the tool's own debut)</span>` : `${ym(first.start)} · ${esc(first.short || first.where)}`;
+    return `<b style="color:${famVar(sk.fam)}">${esc(sk.name)}</b><span class="t-sub">${esc(FAM[sk.fam].latin)} · ${esc(FAM[sk.fam].label)}</span>` +
+      (fl ? `<span class="t-row">first used <em>${fl}</em></span>` : "") +
+      `<span class="t-row">in ${sk.magnitude} role${sk.magnitude === 1 ? "" : "s"}: <em>${sk.roles.map((ro) => esc(ro.short || ro.where)).join(", ")}</em></span>` +
+      (sk.level ? `<span class="t-row">self-assessed: <em>${sk.level}</em></span>` : "");
+  }
+
+  function initViews() {
+    const dial = $("#dial"), knob = $("#knob"), tabs = $$("#dial [role=tab]"), order = tabs.map((t) => t.dataset.view);
+    let cur = order[0];
+    function show(v, focus) {
+      const t = tabs.find((x) => x.dataset.view === v);
+      if (focus) t.focus();
+      if (v === cur) return;
+      knob.style.setProperty("--turn", t.style.getPropertyValue("--a"));
+      tabs.forEach((x) => { const on = x === t; x.setAttribute("aria-selected", String(on)); x.tabIndex = on ? 0 : -1; });
+      for (const id of order) $(`#view-${id}`).hidden = id !== v;
+      $$("[data-for]", $("#methods")).forEach((el) => { el.hidden = el.dataset.for !== v; });
+      cur = v;
+      tip.hide();
+    }
+    tabs.forEach((t) => t.addEventListener("click", () => show(t.dataset.view)));
+    knob.addEventListener("click", () => show(order[(order.indexOf(cur) + 1) % order.length]));
+    dial.addEventListener("keydown", (e) => {
+      const i = order.indexOf(cur);
+      const to = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: order.length - 1 }[e.key];
+      if (to == null) return;
+      e.preventDefault();
+      show(order[(to + order.length) % order.length], true);
+    });
+  }
+
+  // fig. 3b — the periodic table, as on the profile README; the f-block gains a second row for the methods
+  /** the radiation trefoil: three blades round a hub */
+  function trefoil(parent, cx, cy, R, style) {
+    let d = "";
+    for (let k = 0; k < 3; k++) {
+      const a = -Math.PI / 2 + (k * 2 * Math.PI) / 3, a0 = a - Math.PI / 6, a1 = a + Math.PI / 6, r0 = R * 0.3;
+      const P = (rr, t) => `${(cx + rr * Math.cos(t)).toFixed(2)} ${(cy + rr * Math.sin(t)).toFixed(2)}`;
+      d += `M${P(r0, a0)}L${P(R, a0)}A${R} ${R} 0 0 1 ${P(R, a1)}L${P(r0, a1)}A${r0} ${r0} 0 0 0 ${P(r0, a0)}Z`;
+    }
+    d += `M${cx + R * 0.17} ${cy}A${R * 0.17} ${R * 0.17} 0 1 1 ${cx - R * 0.17} ${cy}A${R * 0.17} ${R * 0.17} 0 1 1 ${cx + R * 0.17} ${cy}Z`;
+    return S("path", { d, style }, parent);
+  }
+
+  function initTable() {
+    const svg = $("#ptable"), T = C.PERIODIC, RA = T.radioactive || { elements: [] }, tw = 64, th = 66, gap = 5, W = 900;
+    const x0 = (W - (12 * tw + 11 * gap)) / 2, y0 = 18, fy = y0 + 3 * (th + gap) + 16;
+    const lastRow = Math.max(3, ...T.elements.map((e) => e.row));
+    // the radioactive series hangs one row below the f-block, a little apart, as the actinides do
+    const ry = fy + (lastRow - 3) * (th + gap) + 10;
+    svg.setAttribute("viewBox", `0 0 ${W} ${(RA.elements.length ? ry + th : fy + (lastRow - 3) * (th + gap) - gap) + 18}`);
+    const pos = (r, c) => [x0 + (c - 1) * (tw + gap), r <= 3 ? y0 + (r - 1) * (th + gap) : fy + (r - 4) * (th + gap)];
+    const els = T.elements.slice().sort((a, b) => a.row - b.row || a.col - b.col);
+    const defs = S("defs", {}, svg);
+    defs.innerHTML = `<pattern id="rad-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V6" style="stroke:var(--orange);stroke-width:1.1;opacity:.45"/></pattern>`;
+    const tiles = els.map((e, i) => {
+      const sk = C.skillIndex[e.skill], hue = famVar(sk.fam), [x, y] = pos(e.row, e.col);
+      const g = S("g", { class: "tile", "data-fam": sk.fam, tabindex: 0, "aria-label": `${e.sym}, ${sk.name}: ${FAM[sk.fam].label}, used in ${sk.magnitude} roles` }, svg);
+      S("rect", { x, y, width: tw, height: th, rx: 4, style: `fill:${hue};stroke:${hue}`, "fill-opacity": 0.1, "stroke-opacity": 0.55 }, g);
+      label(g, x + 5, y + 12, String(i + 1), { class: "num" });
+      label(g, x + tw - 5, y + 12, String(sk.magnitude), { class: "mass", "text-anchor": "end" });
+      const name = e.name || sk.name, two = name.length > 11 && name.includes(" ");
+      label(g, x + tw / 2, y + (two ? 37 : 41), e.sym, { class: "sym", "text-anchor": "middle", style: `fill:${hue}` });
+      if (two) {
+        const [w1, ...rest] = name.split(" ");
+        label(g, x + tw / 2, y + 51, w1, { class: "nm", "text-anchor": "middle" });
+        label(g, x + tw / 2, y + 60.5, rest.join(" "), { class: "nm", "text-anchor": "middle" });
+      } else label(g, x + tw / 2, y + 58, name, { class: "nm", "text-anchor": "middle", "font-size": name.length > 10 ? 8.5 : 9 });
+      return { g, fam: sk.fam, html: () => skillTip(sk) };
+    });
+    // the soft skills: unstable, hatched, faintly glowing, with their masses in brackets as radioactive ones are
+    RA.elements.forEach((e, i) => {
+      const x = x0 + (e.col - 1) * (tw + gap), y = ry, n = els.length + i + 1;
+      const g = S("g", { class: "tile rad", "data-fam": "soft", tabindex: 0, "aria-label": `${e.sym}, ${e.name}: a soft skill, radioactive. ${e.note}`, style: `--d:${(-i * 0.7).toFixed(1)}s` }, svg);
+      S("rect", { x, y, width: tw, height: th, rx: 4, fill: "url(#rad-hatch)", class: "glow" }, g);
+      S("rect", { x: x + 0.5, y: y + 0.5, width: tw - 1, height: th - 1, rx: 4, style: "fill:var(--orange);stroke:var(--orange)", "fill-opacity": 0.06, "stroke-opacity": 0.7, "stroke-dasharray": "3 2" }, g);
+      label(g, x + 5, y + 12, String(n), { class: "num" });
+      label(g, x + tw - 5, y + 12, `[${e.mass}]`, { class: "mass", "text-anchor": "end" });
+      label(g, x + tw / 2, y + 41, e.sym, { class: "sym", "text-anchor": "middle", style: "fill:var(--orange)" });
+      label(g, x + tw / 2, y + 58, e.name, { class: "nm", "text-anchor": "middle", "font-size": e.name.length > 12 ? 7.4 : e.name.length > 10 ? 8.2 : 9 });
+      tiles.push({ g, fam: "soft", html: () => `<b style="color:var(--orange)">${esc(e.name)}</b><span class="t-sub">${esc(RA.label || "soft skills")} · radioactive</span><span class="t-row"><em>${esc(e.note)}</em></span>` });
+    });
+    // the title and the key sit in the gaps of the main block, where the real table has none
+    const [tx, ty] = pos(1, 3);
+    label(svg, tx + 4, ty + 26, T.title || "periodic table of the stack", { class: "ttl" });
+    if (T.note) label(svg, tx + 4, ty + 46, T.note, { class: "note" });
+    const [lx, ly] = pos(2, 3), keys = [];
+    FAM_KEYS.forEach((f, i) => {
+      const x = lx + 4 + Math.floor(i / 4) * 132, y = ly + 14 + (i % 4) * 16;
+      const k = S("g", { class: "key", "data-fam": f }, svg);
+      S("rect", { x, y: y - 8, width: 9, height: 9, rx: 2, style: `fill:${famVar(f)}`, "fill-opacity": 0.85 }, k);
+      label(k, x + 16, y, (T.legend && T.legend[f]) || FAM[f].label, { class: "key" });
+      S("rect", { x: x - 3, y: y - 11, width: 126, height: 15, fill: "transparent" }, k);
+      keys.push(k);
+    });
+    if (RA.elements.length) {
+      const i = FAM_KEYS.length, x = lx + 4 + Math.floor(i / 4) * 132, y = ly + 14 + (i % 4) * 16;
+      const k = S("g", { class: "key", "data-fam": "soft" }, svg);
+      trefoil(k, x + 4.5, y - 3.5, 5, "fill:var(--orange)");
+      label(k, x + 16, y, RA.label || "soft skills", { class: "key" });
+      S("rect", { x: x - 3, y: y - 11, width: 126, height: 15, fill: "transparent" }, k);
+      const c0 = Math.min(...RA.elements.map((e) => e.col)), rx = x0 + (c0 - 1) * (tw + gap);
+      trefoil(svg, rx - 18, ry + th / 2 - 8, 6, "fill:var(--orange);opacity:.8");
+      label(svg, rx - 12, ry + th / 2 + 10, RA.label ? `${RA.label} ⟶` : "unstable ⟶", { class: "fb", "text-anchor": "end" });
+    }
+    const fb = els.filter((e) => e.row > 3);
+    if (fb.length) {
+      const [fx, fy1] = pos(4, Math.min(...fb.map((e) => e.col))), mid = fy1 + ((lastRow - 3) * (th + gap) - gap) / 2;
+      label(svg, fx - 12, mid + 4, "f-block ⟶", { class: "fb", "text-anchor": "end" });
+    }
+    const light = (fam, t, e) => {
+      svg.classList.toggle("dim", !!fam);
+      tiles.forEach((x) => x.g.classList.toggle("hi", x.fam === fam));
+      if (t) tip.show(t.html(), e.clientX, e.clientY); else tip.hide();
+    };
+    svg.addEventListener("pointermove", (e) => {
+      const g = e.target.closest(".tile, .key");
+      if (!g) return light(null);
+      light(g.dataset.fam, g.classList.contains("tile") ? tiles.find((x) => x.g === g) : null, e);
+    });
+    svg.addEventListener("pointerleave", () => light(null));
+    svg.addEventListener("focusin", (e) => {
+      const g = e.target.closest(".tile"); if (!g) return;
+      const t = tiles.find((x) => x.g === g), r = g.getBoundingClientRect();
+      light(t.fam, t, { clientX: r.right, clientY: r.top });
+    });
+    svg.addEventListener("focusout", () => light(null));
+  }
+
+  // fig. 3c — the stack as a flow, after giorgia lupi's nobel laureates: one hairline thread per tool per role,
+  // from the roles (newest first) through the skill families to the tools
+  function initFlow() {
+    const svg = $("#flow");
+    const W = 1100, BW = 7, FW = 12, xR = 340, xF = 620, xT = 852, HEAD = 34, TOP = HEAD + 10;
+    const Lf = flowLayout(C), { roles, fams, tools, threads } = Lf;
+    svg.setAttribute("viewBox", `0 0 ${W} ${TOP + Lf.H + 16}`);
+    svg.style.setProperty("--strand", `${Lf.pitch - 0.7}px`);
+
+    // column heads
+    label(svg, xR + BW, 18, "ROLES", { class: "colhead", "text-anchor": "end" });
+    label(svg, xF, 18, "FAMILIES", { class: "colhead", "text-anchor": "middle" });
+    label(svg, xT, 18, "TOOLS", { class: "colhead" });
+    S("path", { d: `M20 ${HEAD - 6}H${W - 20}`, style: "stroke:var(--line2)", "stroke-width": 0.8 }, svg);
+
+    // every strand is one slot wide, so the strands of a bar add up to the bar, with hairline seams between
+    const threadG = S("g", { "pointer-events": "none", transform: `translate(0 ${TOP})` }, svg);
+    for (const t of threads) t.el = S("path", { class: "thread", style: `stroke:${famVar(t.f)}`, d: flowPath(t, xR + BW, xF - FW / 2, xF + FW / 2, xT) }, threadG);
+    const nodeG = S("g", { transform: `translate(0 ${TOP})` }, svg), nodes = [];
+    for (const r of roles) {
+      const L = Lf.role.get(r.id), y = L.top, mid = L.mid;
+      const g = S("g", { class: "node", "data-k": "r", "data-id": r.id, tabindex: 0 }, nodeG);
+      S("rect", { class: "hit", x: 20, y: mid - 13, width: xR + BW - 20, height: 26 }, g);
+      S("rect", { x: xR, y, width: BW, height: L.h, rx: 1.5, style: `fill:var(--${C.GROUPS[r.group]})` }, g);
+      label(g, xR - 10, mid - 1.5, r.roleShort || r.role, { "text-anchor": "end" });
+      label(g, xR - 10, mid + 10.5, `${r.short || r.where} · ${ym(r.start)}–${ym(r.end)}`, { class: "sub", "text-anchor": "end" });
+      nodes.push({ g, k: "r", id: r.id });
+    }
+    for (const f of fams) {
+      const L = Lf.fam.get(f), y = L.top;
+      const g = S("g", { class: "node", "data-k": "f", "data-id": f, tabindex: 0 }, nodeG);
+      S("rect", { class: "hit", x: xF - 80, y: y - 22, width: 160, height: L.h + 24 }, g);
+      S("rect", { x: xF - FW / 2, y, width: FW, height: L.h, rx: 2, style: `fill:${famVar(f)}` }, g);
+      const t = label(g, xF, y - 9, "", { "text-anchor": "middle" });
+      t.innerHTML = `<tspan class="lat">${esc(FAM[f].latin)}</tspan><tspan class="sub"> · ${esc(FAM[f].label)}</tspan>`;
+      S("path", { d: `M${xF} ${y - 6}V${y}`, style: "stroke:var(--faint)", "stroke-width": 0.6 }, g);
+      nodes.push({ g, k: "f", id: f });
+    }
+    const most = tools.reduce((a, b) => (b.magnitude > a.magnitude ? b : a));
+    for (const tl of tools) {
+      const L = Lf.tool.get(tl.id), y = L.top, mid = L.mid;
+      const g = S("g", { class: "node", "data-k": "t", "data-id": tl.id, tabindex: 0 }, nodeG);
+      S("rect", { class: "hit", x: xT, y: mid - 6.5, width: 200, height: 13 }, g);
+      S("rect", { x: xT, y, width: BW, height: L.h, rx: 1.5, style: `fill:${famVar(tl.fam)}` }, g);
+      const t = label(g, xT + BW + 8, mid + 3.8, "");
+      t.innerHTML = `${esc(tl.name)}<tspan class="sub"> ${tl.magnitude}</tspan>`;
+      nodes.push({ g, k: "t", id: tl.id });
+      if (tl === most) {
+        const x0 = xT + BW + 8 + (tl.name.length + 3) * 6.6;
+        S("path", { class: "lead", d: `M${x0} ${mid}C${x0 + 14} ${mid} ${x0 + 14} ${mid - 14} ${x0 + 26} ${mid - 14}` }, nodeG);
+        label(nodeG, x0 + 30, mid - 10.5, `in ${tl.magnitude} of ${roles.length} roles`, { class: "annot" });
+      }
+    }
+
+    function focus(k, id, e) {
+      if (!k) {
+        svg.classList.remove("dim");
+        threads.forEach((t) => t.el.classList.remove("hi"));
+        nodes.forEach((n) => n.g.classList.remove("hi"));
+        tip.hide();
+        return;
+      }
+      const on = threads.filter((t) => (k === "r" ? t.r.id : k === "f" ? t.f : t.t.id) === id);
+      const set = new Set(on.flatMap((t) => [`r:${t.r.id}`, `f:${t.f}`, `t:${t.t.id}`]));
+      svg.classList.add("dim");
+      threads.forEach((t) => t.el.classList.toggle("hi", on.includes(t)));
+      nodes.forEach((n) => n.g.classList.toggle("hi", set.has(`${n.k}:${n.id}`)));
+      const html = k === "r" ? roleTip(C.CAREER.find((r) => r.id === id)) : k === "t" ? skillTip(C.skillIndex[id])
+        : `<b style="color:${famVar(id)}">${esc(FAM[id].latin)}</b><span class="t-sub">${esc(FAM[id].label)}</span>` +
+          `<span class="t-row"><em>${tools.filter((t) => t.fam === id).length}</em> tools · <em>${on.length}</em> uses across <em>${new Set(on.map((t) => t.r.id)).size}</em> roles</span>`;
+      if (e) tip.show(html, e.clientX, e.clientY);
+    }
+    let last = "";
+    svg.addEventListener("pointermove", (e) => {
+      const g = e.target.closest(".node");
+      const key = g ? `${g.dataset.k}:${g.dataset.id}` : "";
+      if (!g) { if (last) focus(null); last = ""; return; }
+      if (key !== last) { last = key; focus(g.dataset.k, g.dataset.id, e); } else tip.show(tipEl.innerHTML, e.clientX, e.clientY);
+    });
+    svg.addEventListener("pointerleave", () => { last = ""; focus(null); });
+    svg.addEventListener("focusin", (e) => {
+      const g = e.target.closest(".node"); if (!g) return;
+      const r = g.getBoundingClientRect();
+      focus(g.dataset.k, g.dataset.id, { clientX: r.right, clientY: r.top });
+    });
+    svg.addEventListener("focusout", () => focus(null));
   }
 
   // ═════════════════════════════════════════════════════════════════════
@@ -1942,6 +2175,6 @@
     initAnomaly, initTopo, initPendulum, initArarat });
   CV.ready.then((data) => {
     C = data; FAM = C.FAMILIES; FAM_KEYS = Object.keys(FAM);
-    run({ initScore, initJobs, initAtlas, initSkillLists, initPhilosophy, initWaves, initFetch, initQuote });
+    run({ initScore, initJobs, initAtlas, initSkillLists, initTable, initFlow, initViews, initPhilosophy, initWaves, initFetch, initQuote });
   });
 })();
