@@ -1,12 +1,11 @@
-/* index.html — every figure on the page. content lives in data.js, helpers in lib.js. */
+/* index.html — every figure on the page. content lives in data/*.json (loaded by cv.js), helpers in lib.js. */
 (() => {
   "use strict";
   const {
     root, still, $, $$, S, H, esc, palette, rgba, mix, flow, onTheme, fit, loop, onceVisible, onResize,
     rng, clamp, lerp, ease, noise1, lorenz, lorenzStep, spline, resample, dft, contours, braille, sci, ym, tenure, nowYears,
   } = L;
-  const C = window.CV;
-  const FAM = C.FAMILIES, FAM_KEYS = Object.keys(FAM);
+  let C, FAM, FAM_KEYS; // filled in once data/*.json has loaded (see the bottom of this file)
   const NOW = nowYears();
   let P = palette();
   const famVar = (f) => `var(--${FAM[f].color})`;
@@ -105,6 +104,23 @@
     const t = S("text", { x, y, ...extra }, parent);
     t.textContent = s;
     return t;
+  }
+
+  // ── the title types itself in ─────────────────────────────────────────
+  function initType() {
+    const nm = $("h1 .nm"), cur = $("h1 .cursor");
+    if (still || !root.classList.contains("pre-type")) return;
+    const full = nm.textContent;
+    nm.textContent = "";
+    root.classList.remove("pre-type");
+    cur.classList.add("typing");
+    let i = 0;
+    const next = () => {
+      nm.textContent = full.slice(0, ++i);
+      if (i < full.length) setTimeout(next, 60 + Math.random() * 80 + (full[i] === " " ? 150 : 0));
+      else setTimeout(() => cur.classList.remove("typing"), 600);
+    };
+    setTimeout(next, 420);
   }
 
   // ═════════════════════════════════════════════════════════════════════
@@ -291,19 +307,27 @@
       g.globalAlpha = 1;
     }
 
-    function step() {
-      for (let s = 0; s < SUB; s++) {
-        lorenzStep(A, DT, prm.sigma, prm.rho, prm.beta);
-        lorenzStep(B, DT, prm.sigma, prm.rho, prm.beta);
-        simT += DT;
-      }
+    // the twins advance in simulated time (1.26 units per real second), not per frame, so their
+    // speed holds at any frame rate; a trail point is laid every SUB substeps
+    let sub = 0, simAcc = 0, lastD = 0;
+    function lay() {
       trailA.push([A[0], A[1], A[2]]); trailB.push([B[0], B[1], B[2]]);
       if (trailA.length > TRAIL) { trailA.shift(); trailB.shift(); }
       const d = Math.hypot(A[0] - B[0], A[1] - B[1], A[2] - B[2]);
-      if (frameNo % 2 === 0 && run.pts.length < 4000) run.pts.push([simT, Math.log10(Math.max(d, 1e-16))]);
+      if ((sub / SUB) % 2 === 0 && run.pts.length < 4000) run.pts.push([simT, Math.log10(Math.max(d, 1e-16))]);
       if (d > 8 && satAt == null) satAt = simT;
+      lastD = d;
       if ((satAt != null && simT - satAt > 6) || simT > 44) seed(Math.floor(Math.random() * n));
-      return d;
+    }
+    function advance(dt) {
+      simAcc += dt * 60 * SUB * DT;
+      for (let guard = 0; simAcc >= DT && guard < SUB * 4; guard++) {
+        lorenzStep(A, DT, prm.sigma, prm.rho, prm.beta);
+        lorenzStep(B, DT, prm.sigma, prm.rho, prm.beta);
+        simT += DT; simAcc -= DT;
+        if (++sub % SUB === 0) lay();
+      }
+      return lastD;
     }
     function writeReadout(d) {
       const f = (v) => (v < 0 ? "−" : " ") + Math.abs(v).toFixed(2).padStart(5);
@@ -313,19 +337,19 @@
         `|a − b| = ${sci(d)}   t = ${simT.toFixed(1)}`;
     }
 
-    function frame(now) {
+    function frame(now, dt) {
       if (!traj) return;
       frameNo++;
       if (!dragging) {
         const idle = now - lastUser > 2600;
-        oscAmp = lerp(oscAmp, idle ? 0.42 : 0, 0.008);
-        if (idle) oscPhase += 0.0042;
+        oscAmp += ((idle ? 0.42 : 0) - oscAmp) * (1 - Math.exp(-dt * 0.48));
+        if (idle) oscPhase += 0.252 * dt;
         const ny = baseYaw + oscAmp * Math.sin(oscPhase);
         if (Math.abs(ny - yaw) > 1e-5) { yaw = ny; dirty = true; }
       }
-      if (Math.abs(target - scale) > 0.002) { scale = lerp(scale, target, 0.12); dirty = true; }
+      if (Math.abs(target - scale) > 0.002) { scale += (target - scale) * (1 - Math.exp(-dt * 7.7)); dirty = true; }
       if (dirty) drawCurve();
-      const d = step();
+      const d = advance(dt);
       drawTwins();
       if (frameNo % 2 === 0) drawInset();
       if (frameNo % 4 === 0) writeReadout(d);
@@ -333,7 +357,7 @@
     function renderStill() {
       if (!traj) return;
       drawCurve();
-      if (!trailA.length) for (let i = 0; i < TRAIL; i++) step();
+      if (!trailA.length) for (let i = 0; i < TRAIL * 2 && trailA.length < TRAIL; i++) advance(1 / 60);
       drawTwins(); drawInset(); writeReadout(Math.hypot(A[0] - B[0], A[1] - B[1], A[2] - B[2]));
     }
     const redraw = () => (still ? requestAnimationFrame(renderStill) : null);
@@ -426,47 +450,207 @@
     label(t, W - 4, Hh + 22, "φ = (1 + √5) / 2 = 1.6180339…", { "text-anchor": "end" });
     label(t, 4, Hh + 22, "a + b : a = a : b");
     reveal(svg);
+    // every so often, while it is on screen, the construction is rubbed out and drawn again
+    if (still) return;
+    let seen = false;
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; }).observe(svg);
+    const again = () => setTimeout(() => {
+      if (seen && !document.hidden && svg.classList.contains("on")) {
+        svg.classList.add("rub"); svg.classList.remove("on");
+        setTimeout(() => { svg.classList.remove("rub"); svg.classList.add("on"); }, 1700);
+      }
+      again();
+    }, 6000 + Math.random() * 3000);
+    again();
   }
 
-  // fig. a — the bell curve
-  function initBell() {
-    const svg = $("#bell");
-    svg.classList.add("draw");
-    const r = rng(5);
-    const g = S("g", { filter: "url(#rough)" }, svg);
-    const base = 132, mu = 150, sd = 40, amp = 100;
-    const f = (x) => base - amp * Math.exp(-0.5 * ((x - mu) / sd) ** 2);
-    const pts = [];
-    for (let x = 12; x <= 288; x += 3) pts.push([x, f(x)]);
-    const area = [[mu - sd, base], ...pts.filter(([x]) => x >= mu - sd && x <= mu + sd), [mu + sd, base]];
-    S("path", { d: "M" + area.map((p) => p.join(" ")).join("L") + "Z", class: "hatch fade", fill: "url(#hatch)" }, g);
-    ink(g, `M6 ${base}H294`, "pencil");
-    ink(g, hand(pts, r, 0.6));
-    for (const k of [-2, -1, 0, 1, 2]) {
-      const x = mu + k * sd;
-      S("path", { d: `M${x} ${base + 5}V${f(x) + (k ? 3 : 0)}`, class: "pencil dash fade" }, g);
+  // background of §0 — a galton board across the whole section. small balls drop about ten a second,
+  // rattle down the pegs and stack single file in narrow slots, filling up to the faint red bell;
+  // when the tallest slot is full the floor opens and it starts over (about a minute and a half)
+  function initGalton() {
+    const cv = $("#galton");
+    const ROWS = 14, HOP = 0.1, EVERY = 0.1, CAP = 18, START = 0.4; // CAP: balls at the top of the bell when full
+    const BOUNCE = 0.5; // the last bounce scatters by N(0, (0.5 peg)²)
+    const rand = rng(17);
+    const choose = (n, k) => { let c = 1; for (let i = 1; i <= k; i++) c = (c * (n - i + 1)) / i; return c; };
+    const binom = Array.from({ length: ROWS + 1 }, (_, k) => choose(ROWS, k) / 2 ** ROWS);
+    const stat = document.createElement("canvas"), pile = document.createElement("canvas");
+    let ctx, W, Hh, g = null, cols = [], reserved = [], expect = [], balls = [], falling = [], total = 0, spawnAcc = 0, state = "fill";
+
+    const pegY = (i) => g.pegTop + i * g.dy;
+    const colOf = (x) => clamp(Math.floor((x - g.x0) / g.colW), 0, g.n - 1);
+    const colX = (c) => g.x0 + (c + 0.5) * g.colW;
+    const restY = (n) => g.floor - g.r - n * 2 * g.r;
+    const gauss = () => Math.sqrt(-2 * Math.log(rand() + 1e-12)) * Math.cos(2 * Math.PI * rand());
+    // Φ, by Abramowitz & Stegun 7.1.26
+    const Phi = (z) => {
+      const t = 1 / (1 + 0.3275911 * Math.abs(z) / Math.SQRT2);
+      const e = 1 - ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-(z * z) / 2);
+      return 0.5 * (1 + Math.sign(z) * e);
+    };
+    /** where a ball leaving the last row ends up: binomial pegs, then a bounce off the last one */
+    const landing = (k) => g.cx + (k - ROWS / 2) * g.dx + gauss() * BOUNCE * g.dx;
+    function layout() {
+      ({ ctx, w: W, h: Hh } = fit(cv));
+      const dpr = cv.width / W;
+      for (const c of [stat, pile]) { c.width = cv.width; c.height = cv.height; c.getContext("2d").setTransform(dpr, 0, 0, dpr, 0, 0); }
+      const dx = clamp(W * 0.06, 22, 72), r = clamp(W / 420, 1.8, 2.9), colW = 2 * r + 1.2;
+      const top = 26, pegTop = top + 24, floor = Hh - 26, binTop = floor - (CAP + 1) * 2 * r;
+      const dy = clamp((binTop - pegTop - 6) / (ROWS - 0.5), 10, 34);
+      const n = Math.floor((W - 8) / colW);
+      g = { dx, dy, r, colW, n, x0: (W - n * colW) / 2, cx: W / 2, top, pegTop, floor, binTop, cap: CAP };
+      // expected share of each slot: the binomial, smeared by the bounce
+      expect = Array.from({ length: n }, (_, c) => {
+        const a = g.x0 + c * colW, b = a + colW, sd = BOUNCE * dx;
+        return binom.reduce((p, q, k) => { const m = g.cx + (k - ROWS / 2) * dx; return p + q * (Phi((b - m) / sd) - Phi((a - m) / sd)); }, 0);
+      });
+      g.peak = Math.max(...expect);
+      const old = cols;
+      cols = Array.from({ length: n }, () => 0); reserved = Array.from({ length: n }, () => 0); balls = [];
+      if (!old.length) seed(Math.round((START * CAP) / g.peak)); else old.forEach((v, c) => { cols[Math.min(n - 1, Math.round((c * n) / old.length))] += v; });
+      total = cols.reduce((a, v) => a + v, 0);
+      drawStatic(); drawPile();
     }
-    ink(g, `M${mu + 3} 70H${mu + sd - 3}M${mu + 8} 66.5L${mu + 3} 70L${mu + 8} 73.5M${mu + sd - 8} 66.5L${mu + sd - 3} 70L${mu + sd - 8} 73.5`, "pencil");
-    const t = S("g", { class: "fade" }, svg);
-    label(t, mu, base + 17, "μ", { "text-anchor": "middle" });
-    for (const k of [-2, -1, 1, 2]) label(t, mu + k * sd, base + 17, `${k > 0 ? "+" : "−"}${Math.abs(k) > 1 ? 2 : ""}σ`, { "text-anchor": "middle" });
-    label(t, mu + sd / 2, 63, "σ", { "text-anchor": "middle" });
-    label(t, mu, 112, "68.3%", { "text-anchor": "middle", style: "fill:var(--fg2);font-style:normal" });
-    label(t, 246, 52, "most things are", { "text-anchor": "middle" });
-    label(t, 246, 64, "normal, eventually", { "text-anchor": "middle" });
-    ink(S("g", { class: "fade" }, svg), "M232 70 C 226 84, 214 92, 200 98", "pencil", { "marker-end": null });
-    reveal(svg);
+    // the board does not start empty: a few hundred balls are already in, so the bell shows from the first look
+    function seed(count) {
+      for (let i = 0; i < count; i++) {
+        let k = 0;
+        for (let j = 0; j < ROWS; j++) k += rand() < 0.5 ? 1 : 0;
+        const c = colOf(landing(k));
+        if (cols[c] < g.cap - 2) cols[c]++;
+      }
+    }
+    function drawStatic() {
+      const c = stat.getContext("2d");
+      c.clearRect(0, 0, W, Hh);
+      c.strokeStyle = rgba(P.faint, 0.8); c.lineWidth = 1; c.lineCap = "round";
+      c.beginPath();
+      c.moveTo(g.cx - 26, g.top - 14); c.lineTo(g.cx - 4, g.top + 6);
+      c.moveTo(g.cx + 26, g.top - 14); c.lineTo(g.cx + 4, g.top + 6);
+      c.stroke();
+      c.fillStyle = rgba(P.faint, 0.5);
+      const pr = clamp(g.r * 0.55, 1, 1.8);
+      for (let i = 0; i < ROWS; i++) {
+        const off = (i % 2) * 0.5, y = pegY(i);
+        for (let k = -60; k <= 60; k++) {
+          const x = g.cx + (k + off) * g.dx;
+          if (x > 3 && x < W - 3) { c.beginPath(); c.arc(x, y, pr, 0, 7); c.fill(); }
+        }
+      }
+      c.strokeStyle = rgba(P.faint, 0.55); c.lineWidth = 0.8;
+      c.beginPath(); c.moveTo(4, g.floor + 0.5); c.lineTo(W - 4, g.floor + 0.5); c.stroke();
+      // the bell the slots fill to: the expected pile when the tallest slot holds CAP balls
+      c.strokeStyle = rgba(P.red, P.dark ? 0.5 : 0.38); c.lineWidth = 1.2; c.lineJoin = "round";
+      c.beginPath();
+      let on = false;
+      expect.forEach((e, i) => {
+        const hgt = (e / g.peak) * CAP * 2 * g.r;
+        if (hgt < 0.4) { on = false; return; }
+        on ? c.lineTo(colX(i), g.floor - hgt) : c.moveTo(colX(i), g.floor - hgt);
+        on = true;
+      });
+      c.stroke();
+      c.font = `italic 10px ${FONT}`; c.fillStyle = rgba(P.faint, 0.95); c.textAlign = "center";
+      const sd = g.dx * Math.sqrt(ROWS / 4 + BOUNCE * BOUNCE);
+      for (const [z, lab] of [[0, "μ"], [-1, "−σ"], [1, "+σ"], [-2, "−2σ"], [2, "+2σ"]]) c.fillText(lab, g.cx + z * sd, g.floor + 15);
+    }
+    function dot(c, x, y) { c.beginPath(); c.arc(x, y, g.r, 0, 7); c.fill(); }
+    function drawPile() {
+      const c = pile.getContext("2d");
+      c.clearRect(0, 0, W, Hh);
+      c.fillStyle = rgba(P.muted, 0.42);
+      cols.forEach((v, i) => { for (let j = 0; j < v; j++) dot(c, colX(i), restY(j)); });
+    }
+    // hop k runs from the top of a peg in row k to the top of the peg below, half a peg left or right;
+    // hop −1 is the drop out of the funnel. off the last row the ball falls free into its slot
+    function ends(b) {
+      const lift = g.r * 1.8;
+      if (b.k < 0) return [[g.cx, g.top], [g.cx, g.pegTop - lift]];
+      return [[b.x, pegY(b.k) - lift], [b.x + (b.side ? 0.5 : -0.5) * g.dx, pegY(b.k + 1) - lift]];
+    }
+    function step(dt) {
+      if (state === "fill") {
+        spawnAcc += dt;
+        while (spawnAcc > EVERY) { spawnAcc -= EVERY * (0.7 + rand() * 0.6); balls.push({ k: -1, x: g.cx, u: 0, side: 0, rights: 0, c: -1 }); }
+      }
+      for (const b of balls) {
+        if (b.c < 0) {
+          b.u += dt / HOP;
+          while (b.u >= 1 && b.c < 0) {
+            b.u -= 1;
+            if (b.k >= 0) { b.x += (b.side ? 0.5 : -0.5) * g.dx; b.rights += b.side; }
+            b.k += 1;
+            b.side = rand() < 0.5 ? 0 : 1;
+            if (b.k >= ROWS - 1) {
+              // the last peg: one more deflection, a little scatter, and down into a slot
+              b.rights += b.side;
+              b.c = colOf(landing(b.rights));
+              b.ty = restY(cols[b.c] + reserved[b.c]++);
+              b.x0 = b.x; b.tx = colX(b.c); b.y = b.y0 = pegY(ROWS - 1) - g.r * 1.8; b.vy = 40;
+            }
+          }
+        } else {
+          b.vy += 1100 * dt; b.y += b.vy * dt;
+          b.x = b.x0 + (b.tx - b.x0) * Math.min(1, (b.y - b.y0) / (g.dy * 1.5));
+          if (b.y >= b.ty) {
+            b.done = true; reserved[b.c]--; cols[b.c]++; total++;
+            const c = pile.getContext("2d"); c.fillStyle = rgba(P.muted, 0.42); dot(c, b.tx, b.ty);
+          }
+        }
+      }
+      balls = balls.filter((b) => !b.done);
+      // full when the pile holds a whole bell's worth (single slots are noisy, so not when the first touches the curve)
+      if (state === "fill" && (total >= CAP / g.peak || cols.some((v) => v >= CAP * 1.6))) state = "settle";
+      if (state === "settle" && !balls.length) {
+        falling = [];
+        cols.forEach((v, i) => { for (let j = 0; j < v; j++) falling.push({ x: colX(i), y: restY(j), vy: rand() * 60 }); });
+        cols.fill(0); reserved.fill(0); total = 0; state = "drain";
+        drawPile();
+      }
+      if (state === "drain") {
+        for (const f of falling) { f.vy += 1100 * dt; f.y += f.vy * dt; }
+        falling = falling.filter((f) => f.y < Hh + 10);
+        if (!falling.length) { state = "fill"; spawnAcc = -1; }
+      }
+    }
+    function ballAt(b) {
+      if (b.c >= 0) return [b.x, b.y];
+      const [S, E] = ends(b), u = b.u, bounce = b.k < 0 ? 0 : Math.sin(Math.PI * u) * g.dy * 0.35;
+      return [S[0] + (E[0] - S[0]) * u, S[1] + (E[1] - S[1]) * u * u - bounce];
+    }
+    function draw() {
+      ctx.clearRect(0, 0, W, Hh);
+      ctx.drawImage(stat, 0, 0, W, Hh);
+      ctx.drawImage(pile, 0, 0, W, Hh);
+      ctx.fillStyle = rgba(P.fg2, 0.5);
+      for (const b of balls) { const [x, y] = ballAt(b); dot(ctx, x, y); }
+      ctx.fillStyle = rgba(P.muted, 0.42);
+      for (const f of falling) dot(ctx, f.x, f.y);
+      ctx.font = `italic 10px ${FONT}`; ctx.fillStyle = rgba(P.faint, 0.95); ctx.textAlign = "left";
+      ctx.fillText(`galton board · ${ROWS} rows · p = ½ · n = ${total}`, g.cx + 34, g.top - 6);
+    }
+    onResize(cv, () => { layout(); draw(); });
+    onTheme(() => { if (g) { drawStatic(); drawPile(); draw(); } });
+    if (still) {
+      requestAnimationFrame(() => { layout(); seed(Math.round((0.35 * CAP) / g.peak)); total = cols.reduce((a, v) => a + v, 0); drawPile(); draw(); });
+      return;
+    }
+    loop(cv, (t, dt) => { if (!g) layout(); step(dt); draw(); });
   }
 
-  // fig. b — logistic map
+  // background of §1 — the logistic map, drawn large. the paragraph sits in the quiet stretch at its
+  // top left, where every r still has a single fixed point, and the plot keeps its curve clear of the text
   function initBifurcation() {
-    const cv = $("#bifurcation"), read = $("#bif-read");
-    const R0 = 2.6, R1 = 4.0;
-    let ctx, W, Hh, dpr, dens = null, probe = 3.2, hover = false, sweep = 0;
-    const pad = { l: 8, r: 8, t: 8, b: 22 };
+    const cv = $("#bifurcation"), text = $("#trajectory .main p:last-of-type");
+    const R0 = 1.8, R1 = 4.0;
+    let ctx, W, Hh, dpr, dens = null, probe = 3.2, sweep = 0;
+    const pad = { l: 8, r: 12, t: 20, b: 30 };
     function compute() {
       ({ ctx, w: W, h: Hh, dpr } = fit(cv));
-      const pw = Math.round((W - pad.l - pad.r) * dpr), ph = Math.round((Hh - pad.t - pad.b) * dpr);
+      // the single branch peaks at x = 2/3 when r = 3; set the top margin so that it passes a line below the text
+      const tb = text.getBoundingClientRect().bottom - cv.getBoundingClientRect().top;
+      pad.t = clamp((tb + 18 - (Hh - pad.b) / 3) * 1.5, 14, Hh * 0.6);
+      const pw = Math.max(1, Math.round((W - pad.l - pad.r) * dpr)), ph = Math.max(1, Math.round((Hh - pad.t - pad.b) * dpr));
       const off = document.createElement("canvas");
       off.width = pw; off.height = ph;
       const o = off.getContext("2d"), img = o.createImageData(pw, ph);
@@ -474,24 +658,24 @@
       for (let i = 0; i < pw; i++) {
         const rr = R0 + (i / pw) * (R1 - R0);
         let x = 0.5;
-        for (let k = 0; k < 300; k++) x = rr * x * (1 - x);
-        for (let k = 0; k < 260; k++) {
+        for (let k = 0; k < 400; k++) x = rr * x * (1 - x);
+        for (let k = 0; k < 300; k++) {
           x = rr * x * (1 - x);
-          const j = Math.floor((1 - x) * (ph - 1));
-          counts[j * pw + i]++;
+          counts[Math.floor((1 - x) * (ph - 1)) * pw + i]++;
         }
       }
-      const [cr, cg, cb] = L.rgb(P.fg2);
-      for (let p = 0; p < counts.length; p++) {
-        const c = counts[p];
+      const [cr, cg, cb] = L.rgb(P.faint);
+      for (let q = 0; q < counts.length; q++) {
+        const c = counts[q];
         if (!c) continue;
-        img.data[p * 4] = cr; img.data[p * 4 + 1] = cg; img.data[p * 4 + 2] = cb;
-        img.data[p * 4 + 3] = Math.min(255, 50 + c * 24);
+        img.data[q * 4] = cr; img.data[q * 4 + 1] = cg; img.data[q * 4 + 2] = cb;
+        img.data[q * 4 + 3] = Math.min(200, 46 + c * 16);
       }
       o.putImageData(img, 0, 0);
       dens = off;
     }
     const rToX = (rr) => pad.l + ((rr - R0) / (R1 - R0)) * (W - pad.l - pad.r);
+    const xToY = (x) => pad.t + (1 - x) * (Hh - pad.t - pad.b);
     function orbit(rr) {
       let x = 0.5;
       for (let k = 0; k < 1500; k++) x = rr * x * (1 - x);
@@ -505,37 +689,37 @@
       if (!dens) compute();
       ctx.clearRect(0, 0, W, Hh);
       ctx.drawImage(dens, pad.l, pad.t, W - pad.l - pad.r, Hh - pad.t - pad.b);
-      ctx.strokeStyle = P.faint; ctx.lineWidth = 0.8;
-      ctx.beginPath(); ctx.moveTo(pad.l, Hh - pad.b + 0.5); ctx.lineTo(W - pad.r, Hh - pad.b + 0.5); ctx.stroke();
-      ctx.font = `9px ${FONT}`; ctx.fillStyle = P.faint; ctx.textAlign = "center";
-      for (const [rr, lab] of [[3, "3"], [3.449, "3.45"], [3.5699, "3.57"], [3.8284, "3.83"], [4, "4"]]) {
+      const axis = Hh - pad.b + 6;
+      ctx.strokeStyle = rgba(P.faint, 0.8); ctx.lineWidth = 0.8;
+      ctx.beginPath(); ctx.moveTo(pad.l, axis + 0.5); ctx.lineTo(W - pad.r, axis + 0.5); ctx.stroke();
+      ctx.font = `9px ${FONT}`; ctx.fillStyle = rgba(P.faint, 0.95); ctx.textAlign = "center";
+      for (const [rr, lab] of [[2, "2"], [2.5, "2.5"], [3, "3"], [3.449, "3.45"], [3.5699, "3.57"], [3.8284, "3.83"], [4, "4"]]) {
         const x = rToX(rr);
-        ctx.beginPath(); ctx.moveTo(x, Hh - pad.b); ctx.lineTo(x, Hh - pad.b + 4); ctx.stroke();
-        ctx.fillText(lab, clamp(x, 10, W - 10), Hh - 6);
+        if (W < 520 && (lab === "3.45" || lab === "3.83")) continue;
+        ctx.beginPath(); ctx.moveTo(x, axis); ctx.lineTo(x, axis + 4); ctx.stroke();
+        ctx.fillText(lab, clamp(x, 10, W - 10), axis + 15);
       }
-      // probe
       const x = rToX(probe), o = orbit(probe);
-      ctx.strokeStyle = rgba(P.accent, 0.55); ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, Hh - pad.b); ctx.stroke();
-      ctx.fillStyle = P.accent;
+      const tr = text.getBoundingClientRect(), cr = cv.getBoundingClientRect();
+      const under = x < tr.right - cr.left + 10 ? tr.bottom - cr.top + 12 : pad.t;
+      ctx.strokeStyle = rgba(P.muted, 0.45); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x, Math.max(pad.t, under)); ctx.lineTo(x, axis); ctx.stroke();
+      ctx.fillStyle = rgba(P.muted, 0.85);
       for (const v of o.vals.slice(0, o.period === Infinity ? 128 : o.period)) {
-        ctx.beginPath(); ctx.arc(x, pad.t + (1 - v) * (Hh - pad.t - pad.b), o.period === Infinity ? 1.1 : 2.6, 0, 7); ctx.fill();
+        ctx.beginPath(); ctx.arc(x, xToY(v), o.period === Infinity ? 1 : 2.6, 0, 7); ctx.fill();
       }
       const desc = o.period === Infinity ? "chaos" : o.period === 1 ? "a fixed point" : `period ${o.period}`;
-      read.textContent = `r = ${probe.toFixed(2)} · ${desc}`;
+      // notes in the empty lower left, under the single branch
+      ctx.font = `italic 10px ${FONT}`; ctx.fillStyle = rgba(P.faint, 0.95); ctx.textAlign = "left";
+      ctx.fillText(`r = ${probe.toFixed(2)} · ${desc}`, pad.l + 2, axis - 10);
+      ctx.fillText("logistic map · xₙ₊₁ = r·xₙ(1 − xₙ)", pad.l + 2, axis - 24);
     }
-    cv.addEventListener("pointermove", (e) => {
-      const rct = cv.getBoundingClientRect();
-      probe = clamp(R0 + ((e.clientX - rct.left - pad.l) / (rct.width - pad.l - pad.r)) * (R1 - R0), R0, R1);
-      hover = true; draw();
-    });
-    cv.addEventListener("pointerleave", () => { hover = false; });
     onResize(cv, () => { dens = null; draw(); });
     onTheme(() => { dens = null; draw(); });
-    loop(cv, () => {
-      if (hover) return;
-      sweep += 0.0016;
-      probe = 2.9 + 1.09 * (0.5 - 0.5 * Math.cos(sweep));
+    if (still) return;
+    loop(cv, (t, dt) => {
+      sweep += 0.085 * dt;
+      probe = 2.05 + 1.94 * (0.5 - 0.5 * Math.cos(sweep));
       draw();
     });
   }
@@ -984,7 +1168,7 @@
         `<span class="t-row">first light <em>${fl}</em></span>` +
         `<span class="t-row">magnitude <em>${s.magnitude}</em> · used in ${s.magnitude} role${s.magnitude > 1 ? "s" : ""}</span>` +
         `<span class="t-row"><em>${s.roles.map((ro) => esc(ro.short || ro.where)).join(", ")}</em></span>` +
-        (s.level ? `<span class="t-row">on the resume: <em>${s.level} knowledge</em></span>` : "");
+        (s.level ? `<span class="t-row">self-assessed: <em>${s.level}</em></span>` : "");
     }
     function setStar(st, e) {
       if (st !== hiStar) {
@@ -1021,8 +1205,11 @@
       if (d.moved <= 0.02) { setStar(d.star, e); return; }
       if (!still && Math.abs(omega) > 0.002 && !spinning) {
         spinning = true;
-        const spin = () => {
-          theta += omega; omega *= 0.94; applyRotation();
+        let last = 0;
+        const spin = (t) => {
+          const k = last ? Math.min(3, (t - last) / (1000 / 60)) : 1;
+          last = t;
+          theta += omega * k; omega *= Math.pow(0.94, k); applyRotation();
           if (Math.abs(omega) > 0.0004 && !drag) requestAnimationFrame(spin); else spinning = false;
         };
         requestAnimationFrame(spin);
@@ -1085,13 +1272,13 @@
   }
 
   function initSkillLists() {
-    const LV = { basic: 1, intermediate: 2, good: 3 };
+    const LV = { basic: 1, intermediate: 2, good: 3, excellent: 4 };
     const ul = $("#prof");
     for (const s of C.SKILLS.filter((x) => x.level)) {
       ul.append(H("li", {}, H("span", { text: s.name }), H("span", { class: "lv", text: s.level }),
         H("span", { class: "bar-l", html: [1, 2, 3, 4].map((i) => `<i class="${i <= LV[s.level] ? "f" : ""}"></i>`).join("") })));
     }
-    ul.after(H("p", { class: "note", style: { marginTop: "12px" }, text: "self-assessed, as on the classic resume. the full stack is charted in fig. 3." }));
+    ul.after(H("p", { class: "note", style: { marginTop: "12px" }, text: "self-assessed. the full stack is charted in fig. 3." }));
     $("#skills-plain").append(...FAM_KEYS.map((f) => H("p", {}, H("b", { text: `${FAM[f].latin} · ${FAM[f].label}` }),
       C.SKILLS.filter((s) => s.fam === f).map((s) => s.name).join(", "))));
   }
@@ -1137,62 +1324,122 @@
 
   function initPhilosophy() {
     const svg = $("#philosophy"), read = $("#ph-read");
-    const W = 440, Hh = 172, rows = [36, 128, 82];
-    svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`);
-    const nodes = {};
-    C.THINKERS.forEach((name, i) => {
-      const x = 26 + (i * (W - 52)) / (C.THINKERS.length - 1);
-      const y = rows[i % 3] + (i % 3 === 2 ? (i % 2 ? 7 : -5) : 0);
-      nodes[name] = { name, x, y, i, ups: [], downs: [] };
-    });
-    for (const [a, b] of C.INFLUENCES) { nodes[b].ups.push(a); nodes[a].downs.push(b); }
+    const nodes = C.THINKERS.map((t, i) => ({ ...t, en: t.id, i, ups: [], downs: [], mode: "en", anim: null }));
+    const by = Object.fromEntries(nodes.map((n) => [n.id, n]));
+    for (const [a, b] of C.INFLUENCES) if (by[a] && by[b]) { by[b].ups.push(a); by[a].downs.push(b); }
     const edgeG = S("g", {}, svg), nodeG = S("g", {}, svg);
-    const edges = C.INFLUENCES.map(([a, b]) => {
-      const A = nodes[a], B = nodes[b], mx = (A.x + B.x) / 2, my = (A.y + B.y) / 2;
-      const dx = B.x - A.x, dy = B.y - A.y, l = Math.hypot(dx, dy);
-      const cx = mx - (dy / l) * l * 0.12, cy = my + (dx / l) * l * 0.12;
-      const d = `M${A.x.toFixed(1)} ${A.y.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${B.x.toFixed(1)} ${B.y.toFixed(1)}`;
-      return { a, b, d, el: S("path", { d, class: "edge" }, edgeG) };
-    });
-    if (!still) [2, 5, 9, 12].forEach((j, k) => {
-      const c = S("circle", { r: 2, class: "idea" }, edgeG);
-      S("animateMotion", { path: edges[j].d, dur: `${2.4 + k * 0.3}s`, begin: `${-k * 0.8}s`, repeatCount: "indefinite" }, c);
-    });
-    for (const n of Object.values(nodes)) {
+    const edges = C.INFLUENCES.filter(([a, b]) => by[a] && by[b]).map(([a, b]) => ({ a, b, el: S("path", { class: "edge" }, edgeG) }));
+    for (const n of nodes) {
       const hub = n.ups.length + n.downs.length >= 3;
-      const g = S("g", { class: "node", "data-n": n.name, tabindex: 0 }, nodeG);
-      S("circle", { cx: n.x, cy: n.y, r: hub ? 3.3 : 2.3 }, g);
-      S("circle", { cx: n.x, cy: n.y, r: 12, class: "hit" }, g);
-      const below = n.i % 3 === 1;
-      label(g, n.x, below ? n.y + 15 : n.y - 9, n.name, { "text-anchor": "middle" });
-      n.g = g;
+      n.g = S("g", { class: "node", "data-n": n.id, tabindex: 0, "aria-label": `${n.en}, in the original: ${n.native}` }, nodeG);
+      n.dot = S("circle", { r: hub ? 3.4 : 2.4 }, n.g);
+      n.hit = S("circle", { r: 15, class: "hit" }, n.g);
+      n.txt = label(n.g, 0, 0, n.en, { "text-anchor": "middle" });
     }
-    const closure = (name, key) => {
-      const seen = new Set(), st = [...nodes[name][key]];
-      while (st.length) { const x = st.pop(); if (!seen.has(x)) { seen.add(x); st.push(...nodes[x][key]); } }
+    function layout() {
+      const W = Math.max(260, svg.clientWidth), Hh = Math.max(200, svg.clientHeight);
+      svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`);
+      const padX = 30, rows = [0.13, 0.86, 0.5];
+      for (const n of nodes) {
+        n.x = padX + (n.i * (W - 2 * padX)) / (nodes.length - 1);
+        n.y = Hh * (rows[n.i % 3] + (n.i % 3 === 2 ? (n.i % 2 ? 0.05 : -0.05) : 0));
+        for (const c of [n.dot, n.hit]) { c.setAttribute("cx", n.x.toFixed(1)); c.setAttribute("cy", n.y.toFixed(1)); }
+        // on a narrow card, every other name in the outer rows steps out a line so neighbours don't touch
+        const crowded = (3 * (W - 2 * padX)) / (nodes.length - 1) < 80, step = crowded && n.i % 3 !== 2 && Math.floor(n.i / 3) % 2 ? 13 : 0;
+        n.txt.setAttribute("x", n.x.toFixed(1));
+        n.txt.setAttribute("y", (n.i % 3 === 1 ? n.y + 18 + step : n.y - 10 - step).toFixed(1));
+      }
+      for (const e of edges) {
+        const A = by[e.a], B = by[e.b], mx = (A.x + B.x) / 2, my = (A.y + B.y) / 2, dx = B.x - A.x, dy = B.y - A.y;
+        e.el.setAttribute("d", `M${A.x.toFixed(1)} ${A.y.toFixed(1)}Q${(mx - dy * 0.12).toFixed(1)} ${(my + dx * 0.12).toFixed(1)} ${B.x.toFixed(1)} ${B.y.toFixed(1)}`);
+      }
+    }
+    new ResizeObserver(layout).observe(svg);
+
+    // a name changes tongue by decoding, letter by letter, through a blur of greek and latin capitals
+    const POOL = "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩABCDEFGHIKLMNOPQRSTVXYZ";
+    function settle(n) { n.txt.textContent = n.mode === "en" ? n.en : n.native; n.txt.setAttribute("class", n.mode === "en" ? "" : n.lang); }
+    function want(n, mode, now = performance.now()) {
+      if (n.mode === mode) return;
+      n.mode = mode;
+      if (still) { settle(n); return; }
+      n.anim = { from: n.txt.textContent, to: mode === "en" ? n.en : n.native, t0: now, dur: 520 + n.native.length * 22, last: 0 };
+      n.txt.setAttribute("class", "");
+    }
+    function animate(now) {
+      for (const n of nodes) {
+        const a = n.anim;
+        if (!a) continue;
+        const p = clamp((now - a.t0) / a.dur, 0, 1);
+        if (p >= 1) { n.anim = null; settle(n); continue; }
+        if (now - a.last < 45) continue;
+        a.last = now;
+        const len = Math.round(lerp(a.from.length, a.to.length, ease(p))), done = Math.floor(ease(p) * len);
+        let out = "";
+        for (let j = 0; j < len; j++) out += j < done ? (a.to[j] ?? "") : POOL[Math.floor(Math.random() * POOL.length)];
+        n.txt.textContent = out;
+      }
+    }
+
+    // a ripple of translation runs down a lineage now and then: each reader turns english, then back
+    const queue = [];
+    let hovering = false, introDone = false, nextRipple = 0;
+    const at = (t, fn) => { queue.push({ t, fn }); queue.sort((x, y) => x.t - y.t); };
+    function ripple(now) {
+      const roots = nodes.filter((n) => !n.ups.length);
+      const root = roots[Math.floor(Math.random() * roots.length)];
+      const seen = new Set([root.id]), level = [[root, null]];
+      for (let d = 0; level.length; d++) {
+        const next = [];
+        for (const [n, parent] of level) {
+          const t = now + d * 620;
+          if (parent) {
+            const e = edges.find((x) => x.a === parent.id && x.b === n.id);
+            at(t - 380, () => e.el.classList.add("lit"));
+            at(t + 700, () => e.el.classList.remove("lit"));
+          }
+          at(t, () => !hovering && want(n, "en"));
+          at(t + 1150, () => !hovering && want(n, "native"));
+          for (const c of n.downs) if (!seen.has(c)) { seen.add(c); next.push([by[c], n]); }
+        }
+        level.splice(0, level.length, ...next);
+      }
+      nextRipple = now + 7000 + seen.size * 620;
+    }
+
+    // hover: the thinker and their lineage read in english, everyone else stays in the original
+    const closure = (id, key) => {
+      const seen = new Set(), st = [...by[id][key]];
+      while (st.length) { const x = st.pop(); if (!seen.has(x)) { seen.add(x); st.push(...by[x][key]); } }
       return seen;
     };
     const idle = read.innerHTML;
-    function focus(name) {
-      if (!name) {
+    function focus(id) {
+      hovering = !!id;
+      queue.length = 0;
+      for (const e of edges) e.el.classList.remove("lit");
+      if (!id) {
         svg.classList.remove("dim");
-        for (const n of Object.values(nodes)) n.g.classList.remove("on", "self");
+        for (const n of nodes) { n.g.classList.remove("on", "self"); if (introDone || still) want(n, "native"); }
         for (const e of edges) e.el.classList.remove("up", "down");
         read.innerHTML = idle;
+        nextRipple = performance.now() + 2500;
         return;
       }
-      const ups = closure(name, "ups"), downs = closure(name, "downs");
+      const ups = closure(id, "ups"), downs = closure(id, "downs");
       svg.classList.add("dim");
-      for (const n of Object.values(nodes)) {
-        n.g.classList.toggle("on", n.name === name || ups.has(n.name) || downs.has(n.name));
-        n.g.classList.toggle("self", n.name === name);
+      for (const n of nodes) {
+        const on = n.id === id || ups.has(n.id) || downs.has(n.id);
+        n.g.classList.toggle("on", on);
+        n.g.classList.toggle("self", n.id === id);
+        want(n, on ? "en" : "native");
       }
       for (const e of edges) {
-        e.el.classList.toggle("up", (ups.has(e.a) && (ups.has(e.b) || e.b === name)));
-        e.el.classList.toggle("down", ((e.a === name || downs.has(e.a)) && downs.has(e.b)));
+        e.el.classList.toggle("up", ups.has(e.a) && (ups.has(e.b) || e.b === id));
+        e.el.classList.toggle("down", (e.a === id || downs.has(e.a)) && downs.has(e.b));
       }
-      const n = nodes[name];
-      read.innerHTML = `<b>${name}</b>` +
+      const n = by[id];
+      read.innerHTML = `<b>${n.en}</b> <span class="faint">(${esc(n.native)})</span>` +
         (n.ups.length ? ` read <span class="u">${n.ups.join(", ")}</span>` : " read no one on this map") +
         (n.downs.length ? ` · read by <span class="d">${n.downs.join(", ")}</span>` : "") +
         ` · lineage of ${ups.size + downs.size} thinkers`;
@@ -1201,6 +1448,20 @@
     svg.addEventListener("pointerleave", () => focus(null));
     svg.addEventListener("focusin", (e) => { const g = e.target.closest(".node"); if (g) focus(g.dataset.n); });
     svg.addEventListener("focusout", () => focus(null));
+
+    if (still) { for (const n of nodes) { n.mode = "native"; settle(n); } return; }
+    // when the card first shows, every name drifts from english into its own tongue, oldest first
+    onceVisible(svg, () => {
+      const now = performance.now();
+      nodes.forEach((n) => at(now + 300 + n.i * 140, () => !hovering && want(n, "native")));
+      at(now + 300 + nodes.length * 140 + 900, () => { introDone = true; });
+      nextRipple = now + 300 + nodes.length * 140 + 4000;
+    }, 0.4);
+    loop(svg, (now) => {
+      while (queue.length && queue[0].t <= now) queue.shift().fn();
+      if (introDone && !hovering && !queue.length && now > nextRipple) ripple(now);
+      animate(now);
+    });
   }
 
   function initJumpwise() {
@@ -1505,10 +1766,11 @@
       ctx.fillStyle = P.faint; ctx.font = `10px ${font}`;
       ctx.fillText(drag ? "let go…" : `t = ${simT.toFixed(1)} s`, 12, Hh - 12);
     }
-    function frame() {
+    let simAcc = 0;
+    function frame(t, dt) {
       if (!drag) {
-        for (let k = 0; k < 5; k++) rk(0.0035);
-        simT += 0.0175;
+        simAcc += dt * 1.05; // about real time
+        for (let k = 0; k < 24 && simAcc >= 0.0035; k++) { rk(0.0035); simAcc -= 0.0035; simT += 0.0035; }
         const G = geom();
         trail.push([G.x2, G.y2]);
         if (trail.length > 520) trail.shift();
@@ -1568,7 +1830,22 @@
     const cx = pts.reduce((a, p) => a + p[0], 0) / N, cy = pts.reduce((a, p) => a + p[1], 0) / N;
     const centred = pts.map(([x, y]) => [x - cx, y - cy]);
     const terms = dft(centred);
-    let K = +slider.value, approx = [], trace = [], phase = 0, ctx, W, Hh, sc = 1, ox = 0, oy = 0;
+    let K = +slider.value, approx = [], trace = [], phase = 0, ctx, W, Hh, sc = 1, ox = 0, oy = 0, rot = 0;
+    const ARM = '"Noto Serif Armenian", Mshtakan, Sylfaen, serif';
+    document.fonts?.load(`500 20px "Noto Serif Armenian"`).then(() => ctx && draw(), () => {});
+    // a small armenian eternity sign in ink: eight curved blades, each bounded by two half-circles and the rim
+    function eternity(x0, y0, R, turn) {
+      const n = 8, step = (2 * Math.PI) / n;
+      ctx.fillStyle = P.fg; ctx.strokeStyle = P.bg; ctx.lineWidth = Math.max(0.6, R * 0.09); ctx.lineJoin = "round";
+      for (let k = 0; k < n; k++) {
+        const a = turn + k * step, b = a + step;
+        ctx.beginPath();
+        ctx.arc(x0 + (Math.cos(a) * R) / 2, y0 + (Math.sin(a) * R) / 2, R / 2, a + Math.PI, a + 2 * Math.PI);
+        ctx.arc(x0, y0, R, a, b);
+        ctx.arc(x0 + (Math.cos(b) * R) / 2, y0 + (Math.sin(b) * R) / 2, R / 2, b + 2 * Math.PI, b + Math.PI, true);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+      }
+    }
     function evalAt(t, k) {
       let x = 0, y = 0;
       for (let i = 0; i < k; i++) { const c = terms[i], a = c.freq * t + c.phase; x += c.amp * Math.cos(a); y += c.amp * Math.sin(a); }
@@ -1593,7 +1870,9 @@
       const font = FONT;
       const base = oy + (0 - cy) * sc;
       ctx.strokeStyle = P.line2; ctx.lineWidth = 0.8;
-      ctx.beginPath(); ctx.moveTo(20, base + 0.5); ctx.lineTo(W - 20, base + 0.5); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(26, base + 0.5); ctx.lineTo(W - 26, base + 0.5); ctx.stroke();
+      const er = W > 560 ? 7 : 5;
+      eternity(20, base + 0.5, er, rot); eternity(W - 20, base + 0.5, er, -rot);
       ctx.setLineDash([2, 4]); ctx.strokeStyle = P.faint;
       ctx.beginPath(); centred.forEach((p, i) => { const [x, y] = toS(p); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.closePath(); ctx.stroke();
       ctx.setLineDash([]);
@@ -1622,11 +1901,14 @@
       if (K >= 24) {
         ctx.globalAlpha = clamp((K - 24) / 12, 0, 1);
         ctx.font = `italic ${W > 560 ? 11 : 9.5}px ${font}`; ctx.fillStyle = P.muted; ctx.strokeStyle = P.faint; ctx.lineWidth = 0.7;
-        for (const [px, h, txt, side] of [[67.2, 39.7, "masis · 5137 m", 1], [22.2, 25, "sis · 3896 m", -1]]) {
+        for (const [px, h, txt, arm, side] of [[67.2, 39.7, "masis · 5137 m", "Մասիս", 1], [22.2, 25, "sis · 3896 m", "Սիս", -1]]) {
           const [sx, sy] = toS([px - cx, -h - cy]);
           ctx.beginPath(); ctx.moveTo(sx, sy - 8); ctx.lineTo(sx + side * 18, sy - 30); ctx.lineTo(sx + side * 26, sy - 30); ctx.stroke();
           ctx.textAlign = side > 0 ? "left" : "right";
+          ctx.font = `italic ${W > 560 ? 11 : 9.5}px ${font}`;
           ctx.fillText(txt, sx + side * 30, sy - 26);
+          ctx.font = `500 ${W > 560 ? 13 : 11}px ${ARM}`;
+          ctx.fillText(arm, sx + side * 30, sy - 11);
         }
         ctx.globalAlpha = 1; ctx.textAlign = "left";
       }
@@ -1636,9 +1918,9 @@
         ctx.fillText("x(t) + i·y(t) = Σ cₙ e^(i n t)", 30, 50);
       }
     }
-    function frame() {
-      const dphi = (2 * Math.PI) / 540;
-      phase += dphi;
+    function frame(t, dt) {
+      rot += dt * 0.14; // the signs turn once every 45 seconds
+      phase += ((2 * Math.PI) / 9) * dt; // one lap every nine seconds
       trace.push(evalAt(phase, K));
       if (phase >= 2 * Math.PI) { phase -= 2 * Math.PI; trace = [trace[trace.length - 1]]; }
       draw();
@@ -1651,9 +1933,15 @@
   }
 
   // ── go ────────────────────────────────────────────────────────────────
-  const inits = { initGolden, initLorenz, initBell, initBifurcation, initScore, initJobs, initAtlas, initSkillLists, initNewsLogo, initNewsCal,
-    initPhilosophy, initJumpwise, initAnomaly, initTopo, initWaves, initFetch, initPendulum, initQuote, initArarat };
-  for (const [name, fn] of Object.entries(inits)) {
-    try { fn(); } catch (err) { console.error(name, err); }
-  }
+  const run = (inits) => {
+    for (const [name, fn] of Object.entries(inits)) {
+      try { fn(); } catch (err) { console.error(name, err); }
+    }
+  };
+  run({ initType, initGolden, initLorenz, initGalton, initBifurcation, initNewsLogo, initNewsCal, initJumpwise,
+    initAnomaly, initTopo, initPendulum, initArarat });
+  CV.ready.then((data) => {
+    C = data; FAM = C.FAMILIES; FAM_KEYS = Object.keys(FAM);
+    run({ initScore, initJobs, initAtlas, initSkillLists, initPhilosophy, initWaves, initFetch, initQuote });
+  });
 })();

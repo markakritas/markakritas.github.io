@@ -67,26 +67,36 @@ window.L = (() => {
   }
 
   // ── render loop: one rAF for every figure, each paused while offscreen ─
+  // Figures get the real time since their last frame (dt, in seconds) and advance by it, so they
+  // keep their speed when the browser lowers the frame rate (idle, battery saver, a busy page).
   const items = new Set();
   let raf = 0;
   const io = new IntersectionObserver((entries) => {
-    for (const e of entries) for (const it of items) if (it.el === e.target) it.visible = e.isIntersecting;
+    for (const e of entries) for (const it of items) if (it.el === e.target) {
+      if (e.isIntersecting && !it.visible) it.last = 0;
+      it.visible = e.isIntersecting;
+    }
     kick();
   }, { rootMargin: "120px" });
   function tick(t) {
     raf = 0;
     let any = false;
-    for (const it of items) if (it.visible && it.running) { it.fn(t); any = true; }
+    for (const it of items) if (it.visible && it.running) {
+      const dt = it.last ? Math.min(0.05, Math.max(0, (t - it.last) / 1000)) : 1 / 60;
+      it.last = t;
+      it.fn(t, dt);
+      any = true;
+    }
     if (any) kick();
   }
   function kick() { if (!raf) raf = requestAnimationFrame(tick); }
-  /** run fn(t) every frame while el is near the viewport. returns {start, stop, once} */
+  /** run fn(t, dt) every frame while el is near the viewport. returns {start, stop, once} */
   function loop(el, fn, { autostart = !still } = {}) {
-    const it = { el, fn, visible: false, running: autostart };
+    const it = { el, fn, visible: false, running: autostart, last: 0 };
     items.add(it);
     io.observe(el);
     return {
-      start() { it.running = true; kick(); },
+      start() { it.running = true; it.last = 0; kick(); },
       stop() { it.running = false; },
       get running() { return it.running; },
       once() { requestAnimationFrame(fn); },

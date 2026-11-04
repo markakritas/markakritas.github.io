@@ -1,0 +1,258 @@
+{
+  "$readme": [
+    "Everything the resume shows. Edit freely; the page, the figures and the preprint PDF all read from here.",
+    "career: one object per role, in display order within each group. start/end are \"YYYY-MM\"; end null = ongoing.",
+    "  main: true puts a role under 'work experience' with its description; the rest go under 'other experience'.",
+    "  skills: ids from the skills list; they drive the chords in fig. 2 and the star magnitudes in fig. 3.",
+    "skills: family is a key of families; level (basic | intermediate | good | excellent) shows under 'programming';",
+    "  since overrides the first-light year for tools younger than the roles that used them.",
+    "groups: role group -> colour token, in display order. families: skill family -> label, constellation name, colour."
+  ],
+  "name": "Mark Akritas",
+  "families": {
+    "lang": { "label": "languages", "latin": "Lingua", "color": "yellow" },
+    "model": { "label": "modelling", "latin": "Modellus", "color": "red" },
+    "llm": { "label": "llm stack", "latin": "Machina Loquens", "color": "purple" },
+    "voice": { "label": "voice ai", "latin": "Vox", "color": "aqua" },
+    "ship": { "label": "shipping", "latin": "Navis", "color": "blue" },
+    "noble": { "label": "noble gases", "latin": "Gases Nobiles", "color": "green" },
+    "tool": { "label": "tooling", "latin": "Instrumenta", "color": "muted" }
+  },
+  "groups": { "industry": "orange", "research & teaching": "blue", "education": "aqua", "before data": "faint" },
+  "skills": [
+    { "id": "python", "name": "Python", "family": "lang", "level": "excellent" },
+    { "id": "r", "name": "R", "family": "lang", "level": "good" },
+    { "id": "sql", "name": "SQL", "family": "lang", "level": "intermediate" },
+    { "id": "js", "name": "JavaScript · HTML/CSS", "family": "lang", "abbr": "JS", "level": "basic" },
+    { "id": "shell", "name": "Shell", "family": "lang" },
+    { "id": "ml", "name": "machine learning", "family": "model", "abbr": "ML" },
+    { "id": "sklearn", "name": "scikit-learn", "family": "model", "abbr": "sklearn" },
+    { "id": "pytorch", "name": "PyTorch", "family": "model" },
+    { "id": "lora", "name": "LoRA fine-tuning", "family": "model", "abbr": "LoRA" },
+    { "id": "mixed", "name": "mixed-effects models", "family": "model", "abbr": "mixed models" },
+    { "id": "doe", "name": "design of experiments", "family": "model", "abbr": "DoE" },
+    { "id": "signal", "name": "signal processing", "family": "model", "abbr": "signals" },
+    { "id": "nlp", "name": "NLP", "family": "model" },
+    { "id": "llm", "name": "LLMs", "family": "llm" },
+    { "id": "rag", "name": "RAG", "family": "llm" },
+    { "id": "agents", "name": "agents", "family": "llm" },
+    { "id": "vllm", "name": "vLLM", "family": "llm" },
+    { "id": "weaviate", "name": "Weaviate", "family": "llm" },
+    { "id": "kreuzberg", "name": "kreuzberg", "family": "llm" },
+    { "id": "searxng", "name": "SearXNG", "family": "llm" },
+    { "id": "livekit", "name": "LiveKit", "family": "voice" },
+    { "id": "elevenlabs", "name": "ElevenLabs", "family": "voice" },
+    { "id": "deepgram", "name": "Deepgram", "family": "voice" },
+    { "id": "rest", "name": "REST APIs", "family": "ship", "abbr": "REST" },
+    { "id": "dash", "name": "dashboards", "family": "ship" },
+    { "id": "dataeng", "name": "data engineering", "family": "ship", "abbr": "data eng." },
+    { "id": "linux", "name": "Linux", "family": "noble" },
+    { "id": "docker", "name": "Docker", "family": "noble" },
+    { "id": "git", "name": "Git", "family": "noble" },
+    { "id": "uv", "name": "uv", "family": "tool", "since": 2024.1 },
+    { "id": "ruff", "name": "ruff", "family": "tool", "since": 2023 },
+    { "id": "pydantic", "name": "Pydantic", "family": "tool" },
+    { "id": "jupyter", "name": "Jupyter", "family": "tool" },
+    { "id": "vscode", "name": "VS Code", "family": "tool" }
+  ],
+  "career": [
+    {
+      "id": "a2k",
+      "group": "industry",
+      "role": "AI/ML Engineer",
+      "where": "Advance2000",
+      "org": "Cloud Private Infrastructure",
+      "start": "2025-11",
+      "end": null,
+      "main": true,
+      "text": "LLM fine-tuning using LoRA. A private, ChatGPT-like AI assistant with web search, RAG and agentic features. Voice AI agents for call centers. Codebase and task management across the team for multiple projects.",
+      "skills": [
+        "llm", "lora", "pytorch", "vllm", "rag", "weaviate", "searxng", "agents", "livekit", "elevenlabs",
+        "deepgram", "python", "git", "docker", "linux", "pydantic", "uv", "ruff", "vscode"
+      ]
+    },
+    {
+      "id": "nlw",
+      "group": "industry",
+      "role": "AI Engineer",
+      "where": "NewLevelWork",
+      "org": "AI Coaching, Leadership & Development",
+      "start": "2025-01",
+      "end": "2025-11",
+      "main": true,
+      "text": "LLM- and voice-based chatbots, agentic workflows, RAG, document parsing, REST APIs.",
+      "skills": [
+        "llm", "agents", "rag", "kreuzberg", "weaviate", "livekit", "elevenlabs", "deepgram", "rest", "python",
+        "pydantic", "docker", "git", "uv", "vscode"
+      ]
+    },
+    {
+      "id": "noble",
+      "group": "industry",
+      "role": "Data Scientist / ML Engineer",
+      "where": "NobleScripts",
+      "org": "AI & Web Dev",
+      "start": "2020-06",
+      "end": "2026-05",
+      "main": true,
+      "text": "Research, machine learning, signal processing, REST API development, data collection, pipelines, deployment, codebase & task management, long-term maintenance.",
+      "skills": [
+        "python", "ml", "sklearn", "pytorch", "signal", "rest", "dataeng", "sql", "js", "shell", "docker",
+        "linux", "git", "jupyter", "vscode", "uv", "ruff"
+      ]
+    },
+    {
+      "id": "clin",
+      "group": "industry",
+      "role": "Data Scientist / Statistician",
+      "where": "ClinStatDevice / ClinSoft",
+      "org": "Bioinformatics",
+      "start": "2019-06",
+      "end": "2020-06",
+      "main": true,
+      "text": "Design of experiments, randomization, simulation, mixed-effects modelling, advanced visualization, dashboard development, report automation.",
+      "skills": ["r", "doe", "mixed", "dash", "sql"]
+    },
+    {
+      "id": "veon",
+      "group": "industry",
+      "role": "IT Intern",
+      "roleShort": "IT Intern · SQL, NLP",
+      "where": "Veon Armenia",
+      "start": "2018-09",
+      "end": "2018-11",
+      "text": "SQL reports, natural language processing.",
+      "skills": ["sql", "nlp", "python"]
+    },
+    {
+      "id": "aua",
+      "group": "research & teaching",
+      "role": "Teaching Associate",
+      "where": "American University of Armenia",
+      "short": "AUA",
+      "start": "2021-01",
+      "end": "2021-05",
+      "text": "Programming for Data Science: teaching Python & R.",
+      "skills": ["python", "r", "jupyter"]
+    },
+    {
+      "id": "pdrf",
+      "group": "research & teaching",
+      "role": "Research Assistant",
+      "where": "PDRF",
+      "start": "2020-07",
+      "end": "2021-03",
+      "text": "Skill-mismatch research: survey preparation, data analysis.",
+      "skills": ["r", "doe"]
+    },
+    {
+      "id": "meta",
+      "group": "research & teaching",
+      "role": "EPIC Startup Program",
+      "where": "MetaStyle",
+      "start": "2020-01",
+      "end": "2020-06",
+      "text": "Text style transfer using machine learning.",
+      "skills": ["python", "ml", "pytorch", "nlp"]
+    },
+    {
+      "id": "hero",
+      "group": "research & teaching",
+      "role": "AI Incubator Program",
+      "roleShort": "AI Incubator",
+      "where": "Hero House · Expper Tech.",
+      "short": "Hero House · Expper",
+      "start": "2019-07",
+      "end": "2019-10",
+      "text": "Robin the Robot: human–robot interaction research, emotional-response system prototyping.",
+      "skills": ["python", "ml"]
+    },
+    {
+      "id": "msc",
+      "group": "education",
+      "role": "Master, Industrial Engineering & Systems Management",
+      "roleShort": "Master, IE & Systems Mgmt",
+      "where": "American University of Armenia",
+      "short": "AUA",
+      "start": "2017-09",
+      "end": "2020-06",
+      "text": "Concentration in data analytics. Capstone: temporal data-based anomaly localization in networks.",
+      "skills": ["r", "python", "sql", "ml", "jupyter"]
+    },
+    {
+      "id": "bsc",
+      "group": "education",
+      "role": "Bachelor, Crisis Management",
+      "where": "Armenian State University of Economics",
+      "short": "ASUE",
+      "start": "2010-09",
+      "end": "2016-06",
+      "text": "Thesis: spatial development in the Republic of Armenia.",
+      "skills": []
+    },
+    {
+      "id": "wiki",
+      "group": "before data",
+      "role": "Digitalization of Accounting",
+      "where": "Wikimedia Armenia",
+      "start": "2017-06",
+      "end": "2017-08",
+      "text": "",
+      "skills": []
+    },
+    {
+      "id": "acct",
+      "group": "before data",
+      "role": "Accountant",
+      "where": "IT, commercial & public sectors",
+      "short": "IT, retail & public",
+      "start": "2015-08",
+      "end": "2017-09",
+      "text": "",
+      "skills": []
+    },
+    {
+      "id": "judicial",
+      "group": "before data",
+      "role": "Judicial Acts Specialist",
+      "where": "",
+      "start": "2014-03",
+      "end": "2015-08",
+      "text": "",
+      "skills": []
+    },
+    {
+      "id": "army",
+      "group": "before data",
+      "role": "Military Service",
+      "where": "Armed Forces of RA",
+      "start": "2011-12",
+      "end": "2013-12",
+      "text": "",
+      "skills": []
+    }
+  ],
+  "pooled": { "label": "pooled estimate", "where": "data & ml", "start": "2019-06" },
+  "languages": [
+    { "script": "Հայերեն", "name": "Armenian", "level": 5, "note": "native or bilingual", "hello": "Բարև" },
+    { "script": "Русский", "name": "Russian", "level": 5, "note": "native or bilingual", "hello": "Привет" },
+    { "script": "English", "name": "English", "level": 4, "note": "full professional", "hello": "Hello" },
+    { "script": "Ελληνικά", "name": "Greek", "level": 2, "note": "limited working", "hello": "Γειά σου" }
+  ],
+  "interests": ["history", "music", "philosophy", "science", "linux ricing"],
+  "projects": {
+    "newsletter": {
+      "name": "NewsPEPper",
+      "kicker": "weekly python newsletter",
+      "about": "PEPs and Python releases, summarized every saturday.",
+      "href": "https://newspepper.dev/#subscribe-email"
+    },
+    "philosophy": { "name": "map of philosophy", "about": "a tool for philosophy enthusiasts", "status": "in development" },
+    "extension": {
+      "name": "jumpwise",
+      "kind": "vs code extension",
+      "about": "intelligent navigation between symbols in your code files.",
+      "href": "https://marketplace.visualstudio.com/items?itemName=markakritas.jumpwise"
+    }
+  }
+}

@@ -13,15 +13,15 @@
 <meta property="og:title" content="Mark Akritas — data scientist · ml & ai engineer">
 <meta property="og:description" content="An interactive resume, typeset like a preprint: a Lorenz attractor, a career scored as a piano roll, and a star atlas of the stack.">
 <meta property="og:url" content="https://markakritas.github.io/">
-<meta property="og:image" content="https://markakritas.github.io/og.jpg">
+<meta property="og:image" content="https://markakritas.github.io/assets/img/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Mark Akritas, data scientist and ML & AI engineer, beside an interactive Lorenz attractor on graph paper">
-<meta name="twitter:image" content="https://markakritas.github.io/og.jpg">
+<meta name="twitter:image" content="https://markakritas.github.io/assets/img/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preload" href="maple-mono-regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="maple-mono-bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/maple-mono-regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/maple-mono-bold.woff2" as="font" type="font/woff2" crossorigin>
 <script>
   // theme + accent before first paint; light unless the visitor chose dark
   try {
@@ -29,8 +29,13 @@
     if (t === "dark") document.documentElement.dataset.theme = "dark";
     if (a) document.documentElement.dataset.accent = a;
   } catch (e) {}
+  // the name is typed in by site.js; hide it until then (and give up after 3 s if scripts never run)
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.documentElement.classList.add("pre-type");
+    setTimeout(function () { document.documentElement.classList.remove("pre-type"); }, 3000);
+  }
 </script>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="assets/css/style.css">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Person","name":"Mark Akritas","jobTitle":"Data Scientist, AI/ML Engineer",
  "email":"mailto:markakrita@gmail.com","url":"https://markakritas.github.io/","sameAs":["https://github.com/markakritas"],
@@ -43,7 +48,7 @@
 <div class="paper" aria-hidden="true"></div>
 
 <header class="bar" id="bar">
-  <a class="mono-mark" href="#top" aria-label="back to top">M<span>·</span>A</a>
+  <a class="mono-mark" href="#top" aria-label="Mark Akritas, back to top"><span class="mm">Μ</span><span class="mm-x" style="--n:3" aria-hidden="true"><i style="--i:0">Α</i><i style="--i:1">Ρ</i><i style="--i:2">Κ</i></span><span class="mm-dot">·</span><span class="mm">Α</span><span class="mm-x" style="--n:6" aria-hidden="true"><i style="--i:3">Κ</i><i style="--i:4">Ρ</i><i style="--i:5">Ι</i><i style="--i:6">Τ</i><i style="--i:7">Α</i><i style="--i:8">Σ</i></span></a>
   <nav class="toc" aria-label="sections">
     <a href="#abstract"><b>§0</b> abstract</a>
     <a href="#trajectory"><b>§1</b> trajectory</a>
@@ -57,8 +62,8 @@
     <div class="dl" id="dl">
       <button class="pill" id="dl-btn" aria-expanded="false" aria-controls="dl-menu">pdf <span aria-hidden="true">↓</span></button>
       <div class="dl-menu" id="dl-menu" hidden>
-        <a href="mark-akritas-resume.pdf" download="Mark Akritas — Resume.pdf"><b>classic</b><span>the professional one · 1 page</span></a>
-        <a href="mark-akritas-resume-preprint.pdf" download="Mark Akritas — Resume (preprint).pdf"><b>preprint</b><span>this page, on paper · 2 pages</span></a>
+        <a href="resume/mark-akritas-resume.pdf" download="Mark Akritas — Resume.pdf"><b>classic</b><span>the professional one · 1 page</span></a>
+        <a href="resume/mark-akritas-resume-preprint.pdf" download="Mark Akritas — Resume (preprint).pdf"><b>preprint</b><span>this page, on paper · 2 pages</span></a>
       </div>
     </div>
     <button class="theme" id="theme" type="button" aria-pressed="false" title="toggle theme (t)">
@@ -77,7 +82,7 @@
 
   <div class="title-text">
     <p class="kicker">curriculum vitae <span class="faint">· vol. 2</span></p>
-    <h1><span class="nm">Mark Akritas</span><span class="cursor" aria-hidden="true"></span></h1>
+    <h1 aria-label="Mark Akritas"><span class="nm" aria-hidden="true">Mark Akritas</span><span class="cursor" aria-hidden="true"></span></h1>
     <p class="role">data scientist · ml &amp; ai engineer</p>
     <p class="tagline">fitting models to a noisy universe.</p>
     <dl class="facts">
@@ -90,8 +95,8 @@
     <p class="chips">
       <a class="chip" href="mailto:markakrita@gmail.com"><span>mail</span>markakrita@gmail.com</a>
       <a class="chip" href="https://github.com/markakritas"><span>github</span>markakritas</a>
-      <a class="chip dl-chip" href="mark-akritas-resume.pdf" download="Mark Akritas — Resume.pdf"><span>pdf</span>classic ↓</a>
-      <a class="chip dl-chip" href="mark-akritas-resume-preprint.pdf" download="Mark Akritas — Resume (preprint).pdf"><span>pdf</span>preprint ↓</a>
+      <a class="chip dl-chip" href="resume/mark-akritas-resume.pdf" download="Mark Akritas — Resume.pdf"><span>pdf</span>classic ↓</a>
+      <a class="chip dl-chip" href="resume/mark-akritas-resume-preprint.pdf" download="Mark Akritas — Resume (preprint).pdf"><span>pdf</span>preprint ↓</a>
     </p>
   </div>
 
@@ -120,8 +125,9 @@
 </section>
 
 <!-- ── §0 abstract ────────────────────────────────────────────────────── -->
-<section class="sec" id="abstract">
+<section class="sec has-bg" id="abstract">
   <div class="sec-head"><span class="num">§0</span><h2>abstract</h2><span class="rule"></span><span class="ref">p. 1</span></div>
+  <canvas class="bg-sketch galton" id="galton" aria-hidden="true"></canvas>
   <div class="main prose">
     <p class="lede">Data scientist and ML/AI engineer. Working with data since 2019<sup class="sn">1</sup>: experiment design and mixed-effects models, ML pipelines and signal processing, now LLMs: fine-tuning, RAG, agents and voice AI. Master's in industrial engineering; before that, crisis management and accounting<sup class="sn">2</sup>. Interests: music, history, science &amp; philosophy.</p>
     <p>These days, at Advance2000: LoRA fine-tuning, a private ChatGPT-like assistant with web search, RAG and agents, and voice agents for call centers. Off hours: <a href="https://newspepper.dev">NewsPEPper</a>, a weekly Python newsletter, and a map of philosophy, still in development.</p>
@@ -130,25 +136,16 @@
   <aside class="margin">
     <p class="note"><sup>1</sup> the pooled estimate: 2019.06 → now, the ◆ at the foot of fig. 2.</p>
     <p class="note"><sup>2</sup> the before-data years (service, judicial acts, ledgers) sit on the grey staff of fig. 2.</p>
-    <figure class="sketch-fig">
-      <svg class="sketch" id="bell" viewBox="0 0 300 170" role="img" aria-label="a hand-drawn normal distribution"></svg>
-      <figcaption><b>fig. a</b> — the bell curve, drawn by hand: ±1σ holds 68.3%.</figcaption>
-    </figure>
   </aside>
 </section>
 
 <!-- ── §1 trajectory ──────────────────────────────────────────────────── -->
-<section class="sec" id="trajectory">
+<section class="sec has-bg" id="trajectory">
   <div class="sec-head"><span class="num">§1</span><h2>trajectory</h2><span class="rule"></span><span class="ref">fig. 2</span></div>
+  <canvas class="bg-sketch bif" id="bifurcation" aria-hidden="true"></canvas>
   <div class="main prose">
     <p>Sixteen years, fifteen parts. The score opens with service, law and ledgers; data enters in 2019 and plays on every bar after. Read it like a piano roll: each row is a role, each note is how long I held it, and the chord to the right shows which instruments of the stack that role played.</p>
   </div>
-  <aside class="margin">
-    <figure class="sketch-fig">
-      <canvas id="bifurcation" aria-label="Logistic map bifurcation diagram; hover to probe a value of r"></canvas>
-      <figcaption><b>fig. b</b> — the logistic map, xₙ₊₁ = r·xₙ(1−xₙ). one path, then two, then four, then all of them. hover to probe r: <span id="bif-read" class="mono-read">r = 3.20 · period 2</span></figcaption>
-    </figure>
-  </aside>
 
   <figure class="wide plate fig-score" id="fig2">
     <div class="scroll-x"><svg id="score" role="img" aria-label="Career drawn as a piano roll: fifteen roles from 2010 to now, grouped into industry, research and teaching, education, and before data."></svg></div>
@@ -211,7 +208,7 @@
       </div>
       <p>PEPs and Python releases, summarized every saturday and delivered to your inbox.</p>
       <div class="np-cal" id="np-cal" aria-hidden="true"></div>
-      <div class="np-form" aria-hidden="true"><span class="field">you@example.com</span><span class="btn">subscribe ↗</span></div>
+      <div class="np-form" aria-hidden="true"><span class="btn">subscribe ↗</span></div>
     </a>
 
     <div class="card plate ph" id="philosophy-card">
@@ -220,7 +217,7 @@
         <span class="status"><i></i>in development</span>
       </div>
       <svg id="philosophy" role="img" aria-label="Fourteen thinkers from Heraclitus to Wittgenstein and who read whom; hover a thinker."></svg>
-      <p class="ph-read" id="ph-read">hover a thinker to trace who they read, and who read them.</p>
+      <p class="ph-read" id="ph-read">each name in its own tongue: greek, latin, german. hover a thinker to read them in english, with who they read and who read them.</p>
       <div class="progress" aria-hidden="true"><i></i></div>
     </div>
 
@@ -234,7 +231,7 @@
       <span class="link-line">marketplace ↗</span>
     </a>
   </div>
-  <p class="wide cap"><b>fig. 4</b> — three things built after hours. the network in the middle card is live: ideas travel along the edges, from heraclitus to wittgenstein.</p>
+  <p class="wide cap"><b>fig. 4</b> — three things built after hours. the network in the middle card is live: translations ripple along the lines of influence, from heraclitus to wittgenstein.</p>
 </section>
 
 <!-- ── §4 education ───────────────────────────────────────────────────── -->
@@ -323,7 +320,7 @@
     </div>
     <div>
       <h3 class="sub">downloads</h3>
-      <p><a href="mark-akritas-resume.pdf" download="Mark Akritas — Resume.pdf">resume · classic (pdf)</a><br><a href="mark-akritas-resume-preprint.pdf" download="Mark Akritas — Resume (preprint).pdf">resume · preprint (pdf)</a></p>
+      <p><a href="resume/mark-akritas-resume.pdf" download="Mark Akritas — Resume.pdf">resume · classic (pdf)</a><br><a href="resume/mark-akritas-resume-preprint.pdf" download="Mark Akritas — Resume (preprint).pdf">resume · preprint (pdf)</a></p>
     </div>
     <div>
       <h3 class="sub">revisions</h3>
@@ -338,10 +335,10 @@
 </main>
 
 <div class="tip" id="tip" role="tooltip" hidden></div>
-<noscript><p class="noscript">The figures on this page are drawn with JavaScript. The full resume is in the <a href="mark-akritas-resume.pdf">classic PDF</a>.</p></noscript>
+<noscript><p class="noscript">The figures on this page are drawn with JavaScript. The full resume is in the <a href="resume/mark-akritas-resume.pdf">classic PDF</a>.</p></noscript>
 
-<script src="data.js"></script>
-<script src="lib.js"></script>
-<script src="site.js"></script>
+<script src="assets/js/cv.js"></script>
+<script src="assets/js/lib.js"></script>
+<script src="assets/js/site.js"></script>
 </body>
 </html>

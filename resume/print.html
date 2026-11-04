@@ -4,14 +4,15 @@
 <meta charset="utf-8">
 <title>Mark Akritas — Resume (preprint)</title>
 <meta name="robots" content="noindex">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- The source of mark-akritas-resume-preprint.pdf: open in Chrome and print to PDF
      (A4, margins none, background graphics on), or see README.md for the headless command. -->
 <style>
-@font-face { font-family: "Maple Mono"; src: url(maple-mono-regular.woff2) format("woff2"); font-weight: 400; font-style: normal; }
-@font-face { font-family: "Maple Mono"; src: url(maple-mono-italic.woff2) format("woff2"); font-weight: 400; font-style: italic; }
-@font-face { font-family: "Maple Mono"; src: url(maple-mono-bold.woff2) format("woff2"); font-weight: 700; font-style: normal; }
-@font-face { font-family: "JetBrains Mono"; src: url(jetbrains-mono-regular.woff2) format("woff2"); unicode-range: U+2190-21FF, U+2200-22FF, U+2300-23FF, U+25A0-25FF, U+27C0-27FF; }
+@font-face { font-family: "Maple Mono"; src: url(../assets/fonts/maple-mono-regular.woff2) format("woff2"); font-weight: 400; font-style: normal; }
+@font-face { font-family: "Maple Mono"; src: url(../assets/fonts/maple-mono-italic.woff2) format("woff2"); font-weight: 400; font-style: italic; }
+@font-face { font-family: "Maple Mono"; src: url(../assets/fonts/maple-mono-bold.woff2) format("woff2"); font-weight: 700; font-style: normal; }
+@font-face { font-family: "JetBrains Mono"; src: url(../assets/fonts/jetbrains-mono-regular.woff2) format("woff2"); unicode-range: U+2190-21FF, U+2200-22FF, U+2300-23FF, U+25A0-25FF, U+27C0-27FF; }
 @page { size: A4; margin: 0; }
 :root {
   --bg: #fbf1c7; --bg-soft: #f2e5bc; --line: #ebdbb2; --line2: #d5c4a1;
@@ -73,7 +74,7 @@ h1 { font-size: 34px; line-height: 1; letter-spacing: -.03em; color: var(--fg); 
 /* sections */
 .sec { margin-top: 12px; }
 .sec-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px; }
-.sec-head .num { color: var(--accent); font-size: 10px; }
+.sec-head .num { color: var(--red); font-size: 10px; }
 .sec-head h2 { font-size: 13.5px; color: var(--fg); font-weight: 700; }
 .sec-head .rule { flex: 1; height: .7px; background: var(--line2); position: relative; top: -3px; }
 .sec-head .ref { font-size: 8px; font-style: italic; color: var(--faint); }
@@ -250,12 +251,12 @@ h1 { font-size: 34px; line-height: 1; letter-spacing: -.03em; color: var(--fg); 
   <div class="folio"><span>Mark Akritas · resume</span><i>markakrita@gmail.com · github.com/markakritas</i><span>2 / 2</span></div>
 </section>
 
-<script src="data.js"></script>
-<script src="lib.js"></script>
+<script src="../assets/js/cv.js"></script>
+<script src="../assets/js/lib.js"></script>
 <script>
-(() => {
+CV.ready.then((C) => {
   const { S, H, esc, rng, clamp, lorenz, simplify, ym, tenure, nowYears, noise1 } = L;
-  const C = window.CV, FAM = C.FAMILIES, KEYS = Object.keys(FAM), NOW = nowYears();
+  const FAM = C.FAMILIES, KEYS = Object.keys(FAM), NOW = nowYears();
   const famVar = (f) => `var(--${FAM[f].color})`;
   const end = (r) => (r.end ? C.years(r.end) : NOW);
   const label = (p, x, y, s, a = {}) => { const t = S("text", { x, y, ...a }, p); t.textContent = s; return t; };
@@ -452,7 +453,7 @@ h1 { font-size: 34px; line-height: 1; letter-spacing: -.03em; color: var(--fg); 
       const a = sec[KEYS[0]].a0;
       label(svg, Math.cos(a) * rad(yr), Math.sin(a) * rad(yr) + 1.8, String(yr), { "font-size": 5, fill: "#a89984", "text-anchor": "middle", style: "paint-order:stroke;stroke:#fbf1c7;stroke-width:2px" });
     }
-    const LV = { basic: 1, intermediate: 2, good: 3 };
+    const LV = { basic: 1, intermediate: 2, good: 3, excellent: 4 };
     document.getElementById("prof").innerHTML = C.SKILLS.filter((s) => s.level).map((s) =>
       `<li><span>${esc(s.name)}</span><span class="lv">${s.level}</span><span class="bar">${[1, 2, 3, 4].map((i) => `<i class="${i <= LV[s.level] ? "f" : ""}"></i>`).join("")}</span></li>`).join("");
     document.getElementById("stack").innerHTML = KEYS.map((f) => `<p><svg width="7" height="7" style="margin-right:4px"><circle cx="3.5" cy="3.5" r="3" style="fill:${famVar(f)}"/></svg><i>${esc(FAM[f].latin)}</i> <span class="fam">· ${esc(FAM[f].label)}</span><br>${by[f].map((s) => esc(s.name)).join(", ")}</p>`).join("");
@@ -478,7 +479,7 @@ h1 { font-size: 34px; line-height: 1; letter-spacing: -.03em; color: var(--fg); 
   })();
 
   document.documentElement.dataset.ready = "1";
-})();
+});
 </script>
 </body>
 </html>
