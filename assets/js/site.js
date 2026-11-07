@@ -863,7 +863,7 @@
       if (peak.v >= 2) {
         const px = (peak.xa + peak.xb) / 2, py = dynY + peak.v * k + 2;
         S("path", { d: `M${px.toFixed(1)} ${py}C${px - 4} ${py + 12}, ${px - 40} ${py + 10}, ${px - 60} ${py + 12}`, class: "lead" }, svg);
-        label(svg, px - 64, py + 15, `${WORD[peak.v]} parts at once`, { class: "annot", "text-anchor": "end" });
+        label(svg, px - 64, py + 15, `${WORD[peak.v]} roles at once`, { class: "annot", "text-anchor": "end" });
       }
 
       // axis
