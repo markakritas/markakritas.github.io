@@ -15,7 +15,7 @@ assets/
   js/cv.js            loads data/*.json, checks it, derives what the figures need
   js/lib.js           shared helpers: palette, render loop, lorenz / dft / marching-squares maths, the flow layout
   js/site.js          every interactive figure on index.html
-  fonts/              Maple Mono, JetBrains Mono (maths), UnifrakturMaguntia, Noto Serif Armenian; subset, SIL OFL
+  fonts/              Maple Mono, JetBrains Mono (maths), UnifrakturMaguntia, Noto Serif Armenian; subset, SIL OFL (UnifrakturMaguntia is whole, as its name is reserved)
   img/                favicon, social preview
 resume/
   mark-akritas-resume.pdf            the classic, professional resume
